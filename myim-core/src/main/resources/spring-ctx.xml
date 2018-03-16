@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/task 
+		http://www.springframework.org/schema/task/spring-task.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd 
+		http://www.springframework.org/schema/jee 
+		http://www.springframework.org/schema/jee/spring-jee.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/cache 
+		http://www.springframework.org/schema/cache/spring-cache.xsd ">
+	
+   	<!-- 定义受环境影响易变的变量 -->
+   	<context:property-placeholder location="classpath:res-${tms.running.env}/application.properties"/>
+
+   	<!-- task任务扫描注解 -->
+   	<task:annotation-driven/>
+   	   	
+   	<!-- 使用annotation 自动注册bean,并保证@Required,@Autowired的属性被注入 -->
+   	<context:component-scan base-package="com.wizarpos.im"/>
+   	
+	<!-- 数据源配置,使用应用内的DBCP数据库连接池 -->
+   	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+      	<!-- Connection Info -->
+      	<property name="driverClassName" value="${jdbc.driver}" />
+      	<property name="url" value="${jdbc.url}" />
+      	<property name="username" value="${jdbc.username}" />
+      	<property name="password" value="${jdbc.password}" />
+
+	   	<!-- Connection Pooling Info -->
+	   	<property name="initialSize" value="10"/>
+    	<property name="maxIdle" value="${dbcp.maxIdle}" />
+    	<property name="maxTotal" value="${dbcp.maxTotal}" />
+      	 
+      	<property name="defaultAutoCommit" value="false" />
+      	<property name="timeBetweenEvictionRunsMillis" value="3600000" />
+      	<property name="minEvictableIdleTimeMillis" value="3600000" />
+		<!-- 
+      	<property name="maxWait" value="3000" />
+		<property name="removeAbandoned" value="true"></property>
+		<property name="removeAbandonedTimeout" value="60"></property>
+		<property name="logAbandoned" value="true"></property>
+		 -->
+		<!-- 获取连接的最大等待时间 -->
+      	<!-- 自动收回超时连接 -->
+      	<!-- 自动回收的超时时间 单位：秒 -->
+      	<!-- 自动回收超时连接时，记录日志 -->
+   	</bean>
+
+   	<!-- 数据源配置,使用应用服务器的数据库连接池 -->
+   	<!--<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/ExampleDB" /> -->
+
+   	<!-- Hibernate配置 -->
+   	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+      	<property name="dataSource" ref="dataSource" />
+      	<property name="packagesToScan" value="com.wizarpos.tms.entity" />
+      	<property name="hibernateProperties">
+         	<props>
+	            <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+            	<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+	            <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+            	<prop key="hibernate.format_sql">true</prop>
+            	<prop key="hibernate.query.substitutions">${hibernate.query.substitutions}</prop>
+            	<prop key="hibernate.default_batch_fetch_size">${hibernate.default_batch_fetch_size}</prop>
+            	<prop key="hibernate.max_fetch_depth">${hibernate.max_fetch_depth}</prop>
+	            <prop key="hibernate.bytecode.use_reflection_optimizer">${hibernate.bytecode.use_reflection_optimizer}</prop>
+	            
+            	<!-- 
+            	<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+            	<prop key="hibernate.cache.use_second_level_cache">true</prop>
+            	<prop key="hibernate.cache.use_query_cache">true</prop>
+            	<prop key="hibernate.cache.use_structured_entries">true</prop>
+            	<prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop>
+            	<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</prop>
+            	<prop key="net.sf.ehcache.configurationResourceName">ehcache/ehcache-hibernate-local.xml</prop>
+            	 -->
+            	
+            	<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+            	<!-- 
+            	sovle the problem of transaction don't open(open session in view)
+             	<prop key="hibernate.jdbc.fetch_size">${hibernate.fetch_size}</prop>
+            	<prop key="hibernate.connection.release_mode">${hibernate.connection.release_mode}</prop>
+            	-->
+         	</props>
+      	</property>
+   	</bean>
+
+	<!-- 事务管理器配置,单数据源事务 -->
+   	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+      	<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+
+	<bean id="logReportResourceBudleMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="i18n/LogReportResource"></property>
+	</bean>
+   	<!-- 使用annotation定义事务 -->
+   	<tx:annotation-driven mode="proxy" transaction-manager="transactionManager" proxy-target-class="true" />
+</beans>
