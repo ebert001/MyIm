@@ -3,10 +3,10 @@ package com.wizarpos.im.core.db.entity;
 import java.util.Date;
 
 /**
- * 离线消息
+ * 已送达消息表．正常情况下，已送达消息不需要记录．
  * @author lizhou
  */
-public class MOfflineMessage extends BaseId {
+public class MArrivedMessage extends BaseId {
 	/** 用户id */
 	private Long userId;
 	/** 群组id */
@@ -19,6 +19,7 @@ public class MOfflineMessage extends BaseId {
 	private Date sendTime;
 	/** 消息记录入库时间 */
 	private Date createTime;
+
 	public Long getUserId() {
 		return userId;
 	}

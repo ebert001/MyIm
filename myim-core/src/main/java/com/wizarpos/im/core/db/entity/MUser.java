@@ -3,29 +3,115 @@ package com.wizarpos.im.core.db.entity;
 import java.util.Date;
 
 /**
- * 可选，加入缓存
+ * 用户信息表．加入缓存，可选
  * @author lizhou
  */
 public class MUser extends BaseId {
-
 	/** 用户名称 */
 	private String userName;
+	/** 别名 */
+	private String alias;
+	/** 用户邮箱 */
+	private String email;
 	/** 密码 */
 	private String password;
 	/** 盐 */
-	private byte[] salt;
+	private String salt;
+	/** 密码算法 */
+	private String alg;
+	/** 用户所在的企业id */
+	private Long corpId;
+	/** 用户最新签名消息 */
+	private Long shortMsgId;
+	/** 用户logo */
+	private String logo;
 	/** 用户手机 */
 	private String mobildNo;
+	/** 用户身份证号码 */
+	private String cardNo;
+	/** 生日．公元纪年 */
+	private Date birthday;
 	/** 注册时间 */
 	private Date registerTime;
-	/** 最近登录时间 */
-	private Date lastLoginTime;
-	
-	
-	/** 用户token，可作为用户离线检测的指标 */
-	private byte[] token;
-	/** 用户在线状态 0 离线 1 在线 2 空闲 3 忙碌 */
-	private byte presence;
-	
-	private Date expiry;
+
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getAlias() {
+		return alias;
+	}
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getSalt() {
+		return salt;
+	}
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+	public String getAlg() {
+		return alg;
+	}
+	public void setAlg(String alg) {
+		this.alg = alg;
+	}
+	public Long getCorpId() {
+		return corpId;
+	}
+	public void setCorpId(Long corpId) {
+		this.corpId = corpId;
+	}
+	public Long getShortMsgId() {
+		return shortMsgId;
+	}
+	public void setShortMsgId(Long shortMsgId) {
+		this.shortMsgId = shortMsgId;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+	public String getMobildNo() {
+		return mobildNo;
+	}
+	public void setMobildNo(String mobildNo) {
+		this.mobildNo = mobildNo;
+	}
+	public String getCardNo() {
+		return cardNo;
+	}
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+	public Date getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	public Date getRegisterTime() {
+		return registerTime;
+	}
+	public void setRegisterTime(Date registerTime) {
+		this.registerTime = registerTime;
+	}
+
+
 }

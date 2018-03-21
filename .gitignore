@@ -1,1 +1,4 @@
 /target/
+/myim-core/target/
+/myim-spring/target/
+*/target/

@@ -67,10 +67,11 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.DigestUtils;
 
 public class CertUtils implements ImConstants {
 	private static final Logger logger = LoggerFactory.getLogger(CertUtils.class);
-	
+
 	public static KeyPair genRSAKeyPair(int keySize) throws Exception {
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 		keyGen.initialize(keySize, new SecureRandom());
@@ -100,7 +101,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 基础方法：生成签名证书
-	 * 
+	 *
 	 * @param privateKey
 	 *            签发者私钥
 	 * @param publicKey
@@ -154,7 +155,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 生成自签名证书
-	 * 
+	 *
 	 * @param dn
 	 * @return
 	 */
@@ -226,7 +227,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 是否是有效的证书链
-	 * 
+	 *
 	 * @param parent
 	 *            父证书
 	 * @param child
@@ -292,7 +293,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 判断证书所用密钥是否有变更
-	 * 
+	 *
 	 * @param csr
 	 *            签名请求证书
 	 * @param certificate
@@ -434,7 +435,7 @@ public class CertUtils implements ImConstants {
 			logger.error("store pkcs12 error", e);
 		}
 	}
-	
+
 	public static void storeInPkcs12File(PrivateKey privateKey, Certificate[] certs, String keyStorePassword,
 			File keyStoreFile) {
 		try {
@@ -454,7 +455,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 获取DN
-	 * 
+	 *
 	 * @param country
 	 *            country name
 	 * @param stateOrProvince
@@ -495,7 +496,7 @@ public class CertUtils implements ImConstants {
 
 	/**
 	 * 获取X500Name的属性
-	 * 
+	 *
 	 * @param x500Name
 	 * @param attr
 	 *            BCStyle.CN BCStyle.C BCStyle.E...
@@ -570,7 +571,7 @@ public class CertUtils implements ImConstants {
 	/**
 	 * Attempt to order the supplied list of X.509 certificates in <b>issued to</b>
 	 * to <b>issued from</b> order.
-	 * 
+	 *
 	 * @param certs
 	 * @return the sotred certificate chain in <b>issued to</b> to <b>issued
 	 *         from</b> order
@@ -701,5 +702,4 @@ public class CertUtils implements ImConstants {
 			return null;
 		}
 	}
-	
 }

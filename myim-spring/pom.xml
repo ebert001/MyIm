@@ -8,17 +8,12 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<artifactId>myim-core</artifactId>
-	<name>core</name>
+	<artifactId>myim-spring</artifactId>
+	<name>spring</name>
+	<version>${project.version}</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.wizarpos.im</groupId>
-			<artifactId>myim-spring</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
