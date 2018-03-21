@@ -22,9 +22,10 @@ create table m_user (
 	short_msg_id bigint comment '用户最新签名id',
 	logo varchar(50) comment '用户logo',
 
-	mobile_no varchar(20) comment '用户手机',
-	card_no varchar(32) comment '用户身份证信息',
 	birthday datetime comment '生日．公元纪年',
+	sex char(1) not null default 'N' comment '性别．N none M male F female',
+	card_no varchar(32) comment '用户身份证信息',
+	mobile_no varchar(20) comment '用户手机',
 	register_time date not null comment '注册时间',
 
 	unique key `uk_name` (name)

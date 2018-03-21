@@ -25,12 +25,15 @@ public class MUser extends BaseId {
 	private Long shortMsgId;
 	/** 用户logo */
 	private String logo;
-	/** 用户手机 */
-	private String mobildNo;
-	/** 用户身份证号码 */
-	private String cardNo;
+
 	/** 生日．公元纪年 */
 	private Date birthday;
+	/** 性别 N none M male F female */
+	private char sex = 'N';
+	/** 用户身份证号码 */
+	private String cardNo;
+	/** 用户手机 */
+	private String mobildNo;
 	/** 注册时间 */
 	private Date registerTime;
 
@@ -88,11 +91,17 @@ public class MUser extends BaseId {
 	public void setLogo(String logo) {
 		this.logo = logo;
 	}
-	public String getMobildNo() {
-		return mobildNo;
+	public Date getBirthday() {
+		return birthday;
 	}
-	public void setMobildNo(String mobildNo) {
-		this.mobildNo = mobildNo;
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	public char getSex() {
+		return sex;
+	}
+	public void setSex(char sex) {
+		this.sex = sex;
 	}
 	public String getCardNo() {
 		return cardNo;
@@ -100,11 +109,11 @@ public class MUser extends BaseId {
 	public void setCardNo(String cardNo) {
 		this.cardNo = cardNo;
 	}
-	public Date getBirthday() {
-		return birthday;
+	public String getMobildNo() {
+		return mobildNo;
 	}
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
+	public void setMobildNo(String mobildNo) {
+		this.mobildNo = mobildNo;
 	}
 	public Date getRegisterTime() {
 		return registerTime;
