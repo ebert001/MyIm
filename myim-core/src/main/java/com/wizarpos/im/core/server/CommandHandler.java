@@ -16,7 +16,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 /**
- * 有新连接进入的同时会创建一个新的类实例
+ *
  * @author lizhou
  */
 public class CommandHandler extends ChannelInboundHandlerAdapter {
@@ -24,7 +24,7 @@ public class CommandHandler extends ChannelInboundHandlerAdapter {
 	private MessageManager messageManager = MessageManager.getSingleton();
 
 	private ByteArrayOutputStream dataBuf;
-	
+
 	public CommandHandler() {
 		logger.debug("Instance address: " + this);
 	}
@@ -37,7 +37,7 @@ public class CommandHandler extends ChannelInboundHandlerAdapter {
 			}
 		});
 	}
-	
+
 	@Override
 	public void channelInactive(final ChannelHandlerContext ctx) {
 		ctx.close();
@@ -64,7 +64,7 @@ public class CommandHandler extends ChannelInboundHandlerAdapter {
 		}
 		MessagePack messagePack = new MessagePack(dataBuf.toByteArray(), ctx);
 		messageManager.addSocketMessage(messagePack);
-		
+
 		dataBuf = new ByteArrayOutputStream();
 	}
 
