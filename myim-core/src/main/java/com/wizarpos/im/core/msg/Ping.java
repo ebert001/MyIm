@@ -6,5 +6,5 @@ public class Ping extends Packet {
 		this.cmd = CMD_PING;
 	}
 
-
+	
 }
