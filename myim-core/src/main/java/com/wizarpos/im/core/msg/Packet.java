@@ -8,12 +8,12 @@ public abstract class Packet {
 
 	public static final byte CMD_PING = 0x01;
 
-	protected byte[] packet;
 	/** one or two bytes length. if first bit is 1, it's two bytes; or it's one bytes */
 	protected byte[] len;
 	/** 1 byte length */
 	protected byte cmd;
 
+	protected byte[] packet;
 
 	public Packet() {}
 

@@ -1,103 +1,134 @@
 package com.wizarpos.im.core.util.pool;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.Array;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ObjectPoolBuilder<T extends BaseObject> {
-
-	/** 活动对象 */
-	private BaseObject[] activatedObject = null;
+	private static final Logger logger = LoggerFactory.getLogger(ObjectPoolBuilder.class);
 	/** 钝化对象 */
-	private BaseObject[] passivatedObject = null;
+	private T[] passivatedObject = null;
+	/** 钝化对象索引．钝化对象的索引记录方式类似于RingBuffer的索引滚动方式 */
+	private int[] passivatedIndex = null;
+	/** 索引读位置 */
+	private int readIndex = 0;
+	/** 索引写位置 */
+	private int writeIndex = 0;
+	/** 对象池容量 */
+	private int capacity = 16;
 
-	private Class<T> poolObject = null;
-	private int capacity;
-	private AtomicInteger borrowNum = new AtomicInteger(0);
-	private int lastFindIndex = 0;
+	private Class<T> poolObjectClass = null;
 
 	private final ReentrantLock lock;
 	private final Condition notEmpty;
-	private final Condition notFull;
 
-	public ObjectPoolBuilder(int capacity) throws Exception {
-		initPoolObject();
+	public ObjectPoolBuilder(int capacity) {
 		this.capacity = capacity;
-		passivatedObject = new BaseObject[capacity];
-		activatedObject = new BaseObject[capacity];
-		for (int i = 0; i < capacity; i++) {
-			T t = poolObject.newInstance();
-			t.setIndex(i);
-			passivatedObject[i] = t;
-		}
-		lock = new ReentrantLock(true);
+
+		lock = new ReentrantLock();
 		notEmpty = lock.newCondition();
-		notFull = lock.newCondition();
 	}
 
 	@SuppressWarnings("unchecked")
-	private void initPoolObject() {
-		@SuppressWarnings("rawtypes")
-		Class clazz = getClass();
+	public ObjectPoolBuilder<T> build(Class<T> clazz) throws Exception {
+		this.poolObjectClass = clazz;
+		passivatedObject = (T[]) Array.newInstance(poolObjectClass, capacity);
+		passivatedIndex = new int[capacity];
 
-		while (clazz != Object.class) {
-			Type t = clazz.getGenericSuperclass();
-			if (!(t instanceof ParameterizedType)) {
-				clazz = clazz.getSuperclass();
-				continue;
+		for (int i = 0; i < capacity; i++) {
+			T t = poolObjectClass.newInstance();
+			t.setIndex(i);
+			passivatedObject[i] = t;
+			passivatedIndex[i] = i;
+		}
+		writeIndex = capacity - 1;
+		return this;
+	}
+
+	public T borrowObject(long timeout, TimeUnit unit) {
+		lock.lock();
+		long nanos = unit.toNanos(timeout);
+		try {
+			while (!hasPassivatedObject()) {
+				if (nanos <= 0L) {
+					return null;
+				}
+				try {
+					nanos = notEmpty.awaitNanos(nanos);
+				} catch (InterruptedException e) {
+					logger.error("Interrupted Exception", e);
+					return null;
+				}
 			}
-			Type[] args = ((ParameterizedType) t).getActualTypeArguments();
-			if (args[0] instanceof Class) {
-				this.poolObject = (Class<T>) args[0];
-				break;
-			}
+			return passivatedObject[getAndIncrementReadIndex()];
+		} finally {
+			lock.unlock();
 		}
 	}
 
-	public T borrowObject(long borrowTimeout, TimeUnit unit) throws InterruptedException {
+	public T borrowObject(boolean await) {
 		lock.lock();
-		long nanos = unit.toNanos(borrowTimeout);
 		try {
-			for (;;) {
-				if (lastFindIndex == capacity) {
-					lastFindIndex = 0;
-				}
-				@SuppressWarnings("unchecked")
-				T t = (T) passivatedObject[lastFindIndex++];
-				if (nanos <= 0) {
+			if (!hasPassivatedObject()) {
+				if (await) {
+					try {
+						notEmpty.await();
+					} catch (InterruptedException e) {
+						logger.error("Interrupted Exception", e);
+						return null;
+					}
+				} else {
 					return null;
 				}
-				nanos = notEmpty.awaitNanos(nanos);
-				if (t == null) {
-					continue;
-				}
-				activatedObject[t.getIndex()] = t;
-				borrowNum.incrementAndGet();
-				return t;
 			}
+			return passivatedObject[getAndIncrementReadIndex()];
 		} finally {
 			lock.unlock();
 		}
 	}
 
 	public void returnObject(T obj) {
-		synchronized (this) {
-			int index = obj.getIndex();
-			passivatedObject[index] = obj;
-			activatedObject[index] = null;
-			borrowNum.decrementAndGet();
-			notFull.signal();
+		lock.lock();
+		try {
+			obj.reset();
+			passivatedIndex[getAndIncrementWriteIndex()] = obj.getIndex();
+			notEmpty.signal();
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public int getNumIdle() {
-		return this.capacity - borrowNum.get();
+		return Math.abs(writeIndex - readIndex);
 	}
 
 	public int getNumActive() {
-		return borrowNum.get();
+		return capacity - getNumIdle();
+	}
+
+	private boolean hasPassivatedObject() {
+		return readIndex != writeIndex;
+	}
+
+	private synchronized int getAndIncrementWriteIndex() {
+		if (writeIndex == capacity) {
+			writeIndex = 0;
+		}
+		int t = writeIndex;
+		writeIndex++;
+		return t;
+	}
+
+	private synchronized int getAndIncrementReadIndex() {
+		if (readIndex == capacity) {
+			readIndex = 0;
+		}
+		int t = readIndex;
+		readIndex++;
+		return t;
 	}
 }
