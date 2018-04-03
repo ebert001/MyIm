@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.wizarpos.im</groupId>
+		<groupId>com.im</groupId>
 		<artifactId>myim</artifactId>
 		<version>${project.version}</version>
 	</parent>

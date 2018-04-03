@@ -27,7 +27,7 @@
    	<task:annotation-driven/>
    	   	
    	<!-- 使用annotation 自动注册bean,并保证@Required,@Autowired的属性被注入 -->
-   	<context:component-scan base-package="com.wizarpos.im"/>
+   	<context:component-scan base-package="com.im"/>
    	
 	<!-- 数据源配置,使用应用内的DBCP数据库连接池 -->
    	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">

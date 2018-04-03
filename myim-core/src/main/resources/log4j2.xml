@@ -9,7 +9,7 @@
 			<AppenderRef ref="DebugFile" />
 			<AppenderRef ref="ErrorFile" />
 		</Root>
-		<Logger name="com.wizarpos.im" level="debug" additivity="false">
+		<Logger name="com.im" level="debug" additivity="false">
 			<!-- 
 			-->
 			<AppenderRef ref="Console" />
