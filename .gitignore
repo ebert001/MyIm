@@ -1,4 +1,9 @@
+.classpath
+.project
+.settings/
 /target/
-/myim-core/target/
-/myim-spring/target/
+
+*/.classpath
+*/.project
+*/.settings/
 */target/

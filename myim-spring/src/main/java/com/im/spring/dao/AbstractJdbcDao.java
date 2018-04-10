@@ -149,18 +149,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> PageResultWrapper<E> getPage(final RowMapper<E> bean, int pageNo, int pageSize) {
-		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageSize) {
+		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount();
 			}
 			@Override
-			public List<E> query(int pageNo, int pageSize) throws Exception {
+			public List<E> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(bean, pageNo, pageSize);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -169,18 +169,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public PageResultWrapper<Map<String, Object>> getPage(int pageNo, int pageSize) {
-		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageSize) {
+		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount();
 			}
 			@Override
-			public List<Map<String, Object>> query(int pageNo, int pageSize) throws Exception {
+			public List<Map<String, Object>> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(pageNo, pageSize);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -189,18 +189,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> PageResultWrapper<E> getPage(final RowMapper<E> bean, int pageNo, int pageSize, final Restriction...restrictions) {
-		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageSize) {
+		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(restrictions);
 			}
 			@Override
-			public List<E> query(int pageNo, int pageSize) throws Exception {
+			public List<E> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(bean, pageNo, pageSize, restrictions);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -209,18 +209,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public PageResultWrapper<Map<String, Object>> getPage(int pageNo, int pageSize, final Restriction...restrictions) {
-		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageSize) {
+		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(restrictions);
 			}
 			@Override
-			public List<Map<String, Object>> query(int pageNo, int pageSize) throws Exception {
+			public List<Map<String, Object>> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(pageNo, pageSize, restrictions);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -271,18 +271,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> PageResultWrapper<E> getPage(final String countSql, final String dataSql, final RowMapper<E> bean, int pageNo, int pageSize, final Restriction...restrictions) {
-		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageSize) {
+		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(countSql, restrictions);
 			}
 			@Override
-			public List<E> query(int pageNo, int pageSize) throws Exception {
+			public List<E> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(dataSql, bean, pageNo, pageSize, restrictions);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -291,18 +291,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public PageResultWrapper<Map<String, Object>> getPage(final String countSql, final String dataSql, int pageNo, int pageSize, final Restriction...restrictions) {
-		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageSize) {
+		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(countSql, restrictions);
 			}
 			@Override
-			public List<Map<String, Object>> query(int pageNo, int pageSize) throws Exception {
+			public List<Map<String, Object>> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(dataSql, pageNo, pageSize, restrictions);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -338,18 +338,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> PageResultWrapper<E> getPage(final String countSql, final String dataSql, final RowMapper<E> bean, int pageNo, int pageSize, final Object...args) {
-		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageSize) {
+		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(countSql, args);
 			}
 			@Override
-			public List<E> query(int pageNo, int pageSize) throws Exception {
+			public List<E> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(dataSql, bean, pageNo, pageSize, args);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -358,18 +358,18 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public PageResultWrapper<Map<String, Object>> getPage(final String countSql, final String dataSql, int pageNo, int pageSize, final Object...args) {
-		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageSize) {
+		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return getCount(countSql, args);
 			}
 			@Override
-			public List<Map<String, Object>> query(int pageNo, int pageSize) throws Exception {
+			public List<Map<String, Object>> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return getList(dataSql, pageNo, pageSize, args);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -403,6 +403,7 @@ public abstract class AbstractJdbcDao {
 	public Long save(final String sql, final Object...values) {
 		KeyHolder holder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				for (int i = 0; i < values.length; i++) {

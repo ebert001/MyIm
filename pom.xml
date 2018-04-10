@@ -17,11 +17,16 @@
 		<log4j.version>2.10.0</log4j.version>
 		<bouncycastle.version>1.58</bouncycastle.version>
 		<spring.version>5.0.4.RELEASE</spring.version>
+		<jetty.version>9.4.9.v20180320</jetty.version>
 	</properties>
 
 	<modules>
 		<module>myim-core</module>
 		<module>myim-spring</module>
+		<module>myim-user</module>
+		<module>myim-messager</module>
+		<module>myim-connector</module>
+
 	</modules>
 
 	<dependencyManagement>
@@ -61,6 +66,18 @@
 			    <groupId>org.apache.commons</groupId>
 			    <artifactId>commons-dbcp2</artifactId>
 			    <version>2.2.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
+			<dependency>
+			    <groupId>org.eclipse.jetty</groupId>
+			    <artifactId>jetty-server</artifactId>
+			    <version>${jetty.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-servlet -->
+			<dependency>
+			    <groupId>org.eclipse.jetty</groupId>
+			    <artifactId>jetty-servlets</artifactId>
+			    <version>${jetty.version}</version>
 			</dependency>
 
 		</dependencies>

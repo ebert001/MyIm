@@ -65,18 +65,18 @@ public abstract class AbstractNamedJdbcDao extends AbstractJdbcDao {
 	}
 
 	public <E> PageResultWrapper<E> namedQueryPage(final String countSql, final String dataSql, final Map<String, ?> param, final RowMapper<E> mapper, int pageNo, int pageSize) {
-		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageSize) {
+		PageResultWrapper<E> wrapper = new PageResultWrapper<E>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return namedQueryInt(countSql, param);
 			}
 			@Override
-			public List<E> query(int pageNo, int pageSize) throws Exception {
+			public List<E> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
 				return namedQueryList(dataSql, param, mapper, pageNo, pageSize);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -89,18 +89,18 @@ public abstract class AbstractNamedJdbcDao extends AbstractJdbcDao {
 	}
 
 	public PageResultWrapper<Map<String, Object>> namedQueryPage(final String countSql, final String dataSql, final Map<String, ?> param, int pageNo, int pageSize) {
-		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageSize) {
+		PageResultWrapper<Map<String, Object>> wrapper = new PageResultWrapper<Map<String, Object>>(pageNo, pageSize) {
 			@Override
-			public int queryTotalCount() throws Exception {
+			public int queryCount() throws Exception {
 				return namedQueryInt(countSql, param);
 			}
 			@Override
-			public List<Map<String, Object>> query(int pageNo, int pageSize) throws Exception {
-				return namedQueryList(dataSql, param, pageNo, pageSize);
+			public List<Map<String, Object>> query(int pageStartIndex, int pageNo, int pageSize) throws Exception {
+				return namedQueryList(dataSql, param, pageStartIndex, pageSize);
 			}
 		};
 		try {
-			wrapper.paging(pageNo);
+			wrapper.paging();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
