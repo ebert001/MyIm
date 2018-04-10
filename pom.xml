@@ -21,7 +21,7 @@
 	</properties>
 
 	<modules>
-		<module>myim-core</module>
+		<module>myim-commons</module>
 		<module>myim-spring</module>
 		<module>myim-user</module>
 		<module>myim-messager</module>
