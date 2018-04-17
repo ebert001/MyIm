@@ -8,6 +8,7 @@
 		<version>${project.version}</version>
 	</parent>
 
+	<name>commons</name>
 	<artifactId>myim-commons</artifactId>
 	<packaging>jar</packaging>
 
@@ -37,5 +38,5 @@
 		    <artifactId>commons-dbcp2</artifactId>
 		</dependency>
 	</dependencies>
-	<name>commons</name>
+
 </project>

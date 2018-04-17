@@ -8,8 +8,8 @@
 		<version>${project.version}</version>
 	</parent>
 
-	<artifactId>myim-connector</artifactId>
 	<name>connector</name>
+	<artifactId>myim-connector</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>

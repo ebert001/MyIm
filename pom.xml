@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.encoding>UTF-8</project.encoding>
 		<project.version>1.0-SNAPSHOT</project.version>
 
 		<netty.version>4.1.21.Final</netty.version>
@@ -59,6 +59,11 @@
 			<dependency>
 			    <groupId>org.springframework</groupId>
 			    <artifactId>spring-context</artifactId>
+			    <version>${spring.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-webmvc</artifactId>
 			    <version>${spring.version}</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
@@ -164,6 +169,7 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<encoding>${project.encoding}</encoding>
 				</configuration>
 			</plugin>
 		</plugins>

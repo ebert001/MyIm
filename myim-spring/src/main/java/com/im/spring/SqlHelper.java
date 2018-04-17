@@ -188,25 +188,4 @@ public class SqlHelper {
 			return sql.toString();
 		}
 	}
-
-	public static void main(String[] args) {
-		System.out.println(SqlHelper.insert("m_user").columns("name, key_type, key_size, public_exponent, modulus, `desc`"));
-		System.out.println(SqlHelper.delete("m_user").where(Restriction.eq("id", 12L), Restriction.eq("name", "zhangsan"), Restriction.or(Restriction.in("ids", 10L, 20L))));
-		System.out.println(SqlHelper.delete("m_user").where(Restriction.or(Restriction.eq("id", 12L))));
-		System.out.println(SqlHelper.delete("m_user").where("id = ?"));
-		System.out.println(SqlHelper.delete("m_user").where());
-		System.out.println(SqlHelper.select("m_user").columns("*").where());
-		System.out.println(SqlHelper.select("m_user").count("*").where());
-		System.out.println(SqlHelper.select("m_user").count("*").where(Restriction.eq("id", 12L)));
-		System.out.println(SqlHelper.select("m_user").count("*").where("id = ?"));
-		System.out.println(SqlHelper.select("m_user a").columns("*").leftJoin("r_user_role b").on("a.id = b.user_id").where("a.id = ?"));
-
-		Select select = SqlHelper.select("m_user").columns("*").where(Restriction.eq("id", 12L), Restriction.eq("name", null), Restriction.or(Restriction.in("ids", 10L, 20L)));
-		System.out.println(select.toCountString());
-		System.out.println(select.toSqlString());
-
-		System.out.println(SqlHelper.update("m_user").columns("name = ?, `desc` = ?").where());
-		System.out.println(SqlHelper.update("m_user").columns("name = ?, `desc` = ?").where(Restriction.eq("id", 12L)));
-		System.out.println(SqlHelper.update("m_user").columns("name = ?, `desc` = ?").where("id = ?"));
-	}
 }
