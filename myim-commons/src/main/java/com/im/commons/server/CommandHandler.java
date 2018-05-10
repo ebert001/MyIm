@@ -32,6 +32,7 @@ public class CommandHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelActive(final ChannelHandlerContext ctx) {
 		ctx.pipeline().get(SslHandler.class).handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
+			@Override
 			public void operationComplete(Future<Channel> future) throws Exception {
 				dataBuf = new ByteArrayOutputStream();
 			}

@@ -22,21 +22,21 @@ public class SSLConfig implements ImConstants {
 	private KeyManager[] keyManagers;
 	private TrustManager[] trustManagers;
 
-	public SSLConfig setTrustStoreParam(File ksFile, char[] pwd) throws Exception {
-		KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
-		ks.load(new FileInputStream(ksFile), pwd);
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance(KEYSTORE_ALG);
-		tmf.init(ks);
-		trustManagers = tmf.getTrustManagers();
-		return this;
-	}
-
 	public SSLConfig setKeyStoreParam(File ksFile, char[] pwd) throws Exception {
 		KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
 		ks.load(new FileInputStream(ksFile), pwd);
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KEYSTORE_ALG);
 		kmf.init(ks, pwd);
 		keyManagers = kmf.getKeyManagers();
+		return this;
+	}
+
+	public SSLConfig setTrustStoreParam(File ksFile, char[] pwd) throws Exception {
+		KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
+		ks.load(new FileInputStream(ksFile), pwd);
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(KEYSTORE_ALG);
+		tmf.init(ks);
+		trustManagers = tmf.getTrustManagers();
 		return this;
 	}
 

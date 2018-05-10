@@ -10,14 +10,15 @@ import org.slf4j.LoggerFactory;
 
 public class ObjectPoolBuilderTest {
 	private static final Logger logger = LoggerFactory.getLogger(ObjectPoolBuilderTest.class);
-	private ObjectPoolBuilder<TestObject> pool = null;
+	private FixedObjectPoolBuilder<TestObject> pool = null;
 	private ExecutorService service = Executors.newFixedThreadPool(100);
 
 	private static int tcount = 0;
 
 	@Test
 	public void testBorrowAndReturn() throws Exception {
-		pool = new ObjectPoolBuilder<TestObject>(100).build(TestObject.class);
+		pool = new FixedObjectPoolBuilder<TestObject>(100);
+		pool.build(TestObject.class);
 		for (int i = 0; i < 1000; i++) {
 			TestObject testObj = pool.borrowObject(true);
 			testObj.setMsg("xxx");

@@ -28,6 +28,7 @@ import io.netty.handler.ssl.SslHandler;
 public class NettyServer implements ImConstants {
 	private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
+	private String name = "";
 	private Class<? extends ServerChannel> channelType = NioServerSocketChannel.class;
 	private Map<ChannelOption<?>, ?> channelOptions;
 	private SocketAddress address;
@@ -39,29 +40,25 @@ public class NettyServer implements ImConstants {
 		this.address = new InetSocketAddress(port);
 	}
 
-	public void set() {
-
-	}
-
 	public void init() throws IOException {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-		ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup);
-		b.channel(channelType);
+		ServerBootstrap bootstrap = new ServerBootstrap();
+		bootstrap.group(bossGroup, workerGroup);
+		bootstrap.channel(channelType);
 		if (NioServerSocketChannel.class.isAssignableFrom(channelType)) {
-			b.option(ChannelOption.SO_BACKLOG, 128);
-			b.childOption(ChannelOption.SO_KEEPALIVE, true);
+			bootstrap.option(ChannelOption.SO_BACKLOG, 128);
+			bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
 		}
 		if (channelOptions != null) {
 			for (Map.Entry<ChannelOption<?>, ?> entry : channelOptions.entrySet()) {
 				@SuppressWarnings("unchecked")
 				ChannelOption<Object> key = (ChannelOption<Object>) entry.getKey();
-				b.childOption(key, entry.getValue());
+				bootstrap.childOption(key, entry.getValue());
 			}
 		}
-		b.childHandler(new ChannelInitializer<SocketChannel>() {
+		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel socketChannel) throws Exception {
 				ChannelPipeline pipeline = socketChannel.pipeline();
@@ -71,7 +68,7 @@ public class NettyServer implements ImConstants {
 				pipeline.addLast(new CommandHandler());
 			}
 		});
-		ChannelFuture future = b.bind(address);
+		ChannelFuture future = bootstrap.bind(address);
 		try {
 			future.await();
 		} catch (InterruptedException e) {
@@ -82,6 +79,7 @@ public class NettyServer implements ImConstants {
 			throw new IOException("Failed to bind", future.cause());
 		}
 		channel = future.channel();
+		logger.info("[{}]Start successfully.", this.name);
 	}
 
 	private void addSslHandler(ChannelPipeline pipeline) {
@@ -106,4 +104,11 @@ public class NettyServer implements ImConstants {
 		});
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
 }

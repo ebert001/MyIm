@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ObjectPoolBuilder<T extends BaseObject> {
-	private static final Logger logger = LoggerFactory.getLogger(ObjectPoolBuilder.class);
+public class FixedObjectPoolBuilder<T extends BaseObject> {
+	private static final Logger logger = LoggerFactory.getLogger(FixedObjectPoolBuilder.class);
 	/** 钝化对象 */
 	private T[] passivatedObject = null;
 	/** 钝化对象索引．钝化对象的索引记录方式类似于RingBuffer的索引滚动方式 */
@@ -26,7 +26,7 @@ public class ObjectPoolBuilder<T extends BaseObject> {
 	private final ReentrantLock lock;
 	private final Condition notEmpty;
 
-	public ObjectPoolBuilder(int capacity) {
+	public FixedObjectPoolBuilder(int capacity) {
 		this.capacity = capacity;
 
 		lock = new ReentrantLock();
@@ -34,7 +34,7 @@ public class ObjectPoolBuilder<T extends BaseObject> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ObjectPoolBuilder<T> build(Class<T> clazz) throws Exception {
+	public FixedObjectPoolBuilder<T> build(Class<T> clazz) throws Exception {
 		this.poolObjectClass = clazz;
 		passivatedObject = (T[]) Array.newInstance(poolObjectClass, capacity);
 		passivatedIndex = new int[capacity];
