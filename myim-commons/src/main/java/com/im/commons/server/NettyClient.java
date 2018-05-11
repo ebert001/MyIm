@@ -1,5 +1,9 @@
 package com.im.commons.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,9 +85,7 @@ public class NettyClient {
 	    workerGroup.shutdownGracefully();
 	}
 
-	public static class HelloClientIntHandler extends ChannelInboundHandlerAdapter {
-	    private static Logger logger = LoggerFactory.getLogger(HelloClientIntHandler.class);
-
+	public class HelloClientIntHandler extends ChannelInboundHandlerAdapter {
 	    // 接收server端的消息，并打印出来
 	    @Override
 	    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -100,10 +102,39 @@ public class NettyClient {
 	    public void channelActive(ChannelHandlerContext ctx) throws Exception {
 	        logger.info("HelloClientIntHandler.channelActive");
 	        String msg = "Are you ok?";
-	        ByteBuf encoded = ctx.alloc().buffer(4 * msg.length());
-	        encoded.writeBytes(msg.getBytes());
-	        ctx.write(encoded);
-	        ctx.flush();
+	        write(msg);
 	    }
+	}
+
+	public void write(byte[] data) {
+		if (channel == null) {
+			logger.warn("[{}] Netty client channel is null", this.name);
+			return;
+		}
+		if (!channel.isWritable()) {
+			logger.warn("[{}] Netty client channel is not writable.", this.name);
+			return;
+		}
+		ByteBuf buffer = channel.alloc().buffer(data.length);
+		buffer.writeBytes(data);
+		channel.writeAndFlush(buffer);
+	}
+
+	public void write(String msg) {
+		write(msg.getBytes(StandardCharsets.UTF_8));
+	}
+
+	public void write(InputStream input, int length) throws IOException {
+		if (channel == null) {
+			logger.warn("[{}] Netty client channel is null", this.name);
+			return;
+		}
+		if (!channel.isWritable()) {
+			logger.warn("[{}] Netty client channel is not writable.", this.name);
+			return;
+		}
+		ByteBuf buffer = channel.alloc().ioBuffer();
+		buffer.writeBytes(input, length);
+		channel.writeAndFlush(buffer);
 	}
 }

@@ -1,5 +1,6 @@
 package com.im.commons.util.pool;
 
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,32 +21,33 @@ public class ObjectPoolBuilderTest {
 		pool = new FixedObjectPoolBuilder<TestObject>(100);
 		pool.build(TestObject.class);
 		for (int i = 0; i < 1000; i++) {
-			TestObject testObj = pool.borrowObject(true);
-			testObj.setMsg("xxx");
-//			final int t = i;
-//			service.submit(new Runnable() {
-//				@Override
-//				public void run() {
-//					logger.debug("---> " + t);
-//					TestObject testObj = pool.borrowObject(true);
-//					if (testObj == null) {
-//						logger.error("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-//						return;
-//					}
-//					testObj.setMsg("xxx");
-//					synchronized (this) {
-//						try {
-//							Thread.sleep(new Random().nextInt(5) * 100);
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//					pool.returnObject(testObj);
-//
-//					logger.debug("tcount: " + tcount);
-//				}
-//			});
+//			TestObject testObj = pool.borrowObject(true);
+//			testObj.setMsg("xxx");
+			final int t = i;
+			service.submit(new Runnable() {
+				@Override
+				public void run() {
+					logger.debug("---> " + t);
+					TestObject testObj = pool.borrowObject(true);
+					if (testObj == null) {
+						logger.error("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+						return;
+					}
+					testObj.setMsg("xxx");
+					synchronized (this) {
+						try {
+							Thread.sleep(new Random().nextInt(5) * 100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					pool.returnObject(testObj);
+
+					logger.debug("tcount: " + tcount);
+				}
+			});
 		}
+
 		service.awaitTermination(3, TimeUnit.MINUTES);
 	}
 
