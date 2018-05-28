@@ -21,6 +21,7 @@ create table m_user (
 	corp_id bigint not null comment '用户企业id',
 	short_msg_id bigint comment '用户最新签名id',
 	logo varchar(50) comment '用户logo',
+	status tinyint not null default 1 comment '用户状态. 1 正常 2 锁定 3 禁用 4 注销',
 
 	birthday datetime comment '生日．公元纪年',
 	sex char(1) not null default 'N' comment '性别．N none M male F female',
@@ -44,7 +45,7 @@ create table m_user_behavior (
 	id bigint not null auto_increment primary key comment '主键',
 	user_id bigint not null comment '用户id',
 	presence tinyint not null default 0 comment '用户状态. 0 离线 1 在线 2 空闲 3 忙碌',
-	net_type tinyint not null default 0 comment '网络类型．0 未知 1 有线 2 WIFI 3 2G 4 3G 5 4G 6 5G ',
+	net_type tinyint not null default 0 comment '网络类型．-1 未知 0 有线 1 WIFI 2 2G 3 3G 4 4G 5 5G ',
 	device_type smallint not null default 0 comment '客户端设备类型. 0 未知 1 pc-win 2 pc-linux 3 pc-apple 4 mo-apple 5 pad-apple 6 mo-android 7 pad-android',
 	token varchar(64) not null comment '用户登录成功获得的令牌',
 	expiry date not null comment '用户令牌过期时间',
@@ -121,5 +122,13 @@ create table m_arrived_msg (
 	msg text not null comment '消息，最大2个字节长度',
 	send_time datetime comment '发送时间',
 	create_time datetime comment '消息记录入库时间',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/** 国际化表 */
+m_sys_i18n (
+	id bigint not null auto_increment primary key comment '主键',
+	lbl varchar(100) not null comment '标签',
+	msg_zh_cn text comment '内容．中文',
+	msg_en_us text comment '内容．英文',
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
