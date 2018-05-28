@@ -20,6 +20,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.im</groupId>
+			<artifactId>myim-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>

@@ -2,6 +2,9 @@ package com.im.commons.util;
 
 public interface ImConstants {
 
+	/** 企业官方名称 */
+	public static final String OFFICIAL_NAME = "MyIM";
+
 	public static final String SSL_PRTOCOL = "TLSv1.2";
 	public static final String SSL_PROVIDER_NAME = "BC";
 

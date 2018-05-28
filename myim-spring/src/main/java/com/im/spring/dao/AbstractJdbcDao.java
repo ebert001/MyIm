@@ -400,7 +400,7 @@ public abstract class AbstractJdbcDao {
 	 * @return
 	 */
 	@Transactional
-	public Long save(final String sql, final Object...values) {
+	public Long saveAndGetId(final String sql, final Object...values) {
 		KeyHolder holder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			@Override
@@ -413,5 +413,9 @@ public abstract class AbstractJdbcDao {
 			}
 		}, holder);
 		return holder.getKey().longValue();
+	}
+
+	public void update(String sql, Object...values) {
+		jdbcTemplate.update(sql, values);
 	}
 }

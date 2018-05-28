@@ -28,7 +28,7 @@ public class ObjectPoolBuilderTest {
 				@Override
 				public void run() {
 					logger.debug("---> " + t);
-					TestObject testObj = pool.borrowObject(true);
+					TestObject testObj = pool.borrowObject();
 					if (testObj == null) {
 						logger.error("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 						return;

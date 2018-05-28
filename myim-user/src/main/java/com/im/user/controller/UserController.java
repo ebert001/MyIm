@@ -1,16 +1,21 @@
 package com.im.user.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.im.commons.db.service.UserService;
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
+	@Autowired
+	private UserService userService;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public void register() {
-
+	public void register(String username, String password) {
+		userService.addUser(username, password);
 	}
 
 	@RequestMapping(value = "/exists", method = RequestMethod.POST)

@@ -7,6 +7,22 @@ import java.util.Date;
  * @author lizhou
  */
 public class MUser extends BaseId {
+	/** 用户状态. 正常 */
+	public static final byte STATUS_NORMAL = 1;
+	/** 用户状态. 锁定．可能是用户输入密码错误等原因导致 */
+	public static final byte STATUS_LOCKED = 2;
+	/** 用户状态. 禁用．可能是用户有违规操作，被系统自动发现或管理员禁用 */
+	public static final byte STATUS_DISABLED = 3;
+	/** 用户状态. 注销．可能是用户主动注销帐号等 */
+	public static final byte STATUS_CANCELED = 4;
+
+	/** 性别. 未知 */
+	public static final char SEX_NONE = 'N';
+	/** 性别. 男 */
+	public static final char SEX_MALE = 'M';
+	/** 性别. 女 */
+	public static final char SEX_FEMALE = 'F';
+
 	/** 用户名称 */
 	private String userName;
 	/** 别名 */
@@ -25,6 +41,8 @@ public class MUser extends BaseId {
 	private Long shortMsgId;
 	/** 用户logo */
 	private String logo;
+	/** 用户状态 */
+	private Byte status;
 
 	/** 生日．公元纪年 */
 	private Date birthday;
@@ -90,6 +108,12 @@ public class MUser extends BaseId {
 	}
 	public void setLogo(String logo) {
 		this.logo = logo;
+	}
+	public Byte getStatus() {
+		return status;
+	}
+	public void setStatus(Byte status) {
+		this.status = status;
 	}
 	public Date getBirthday() {
 		return birthday;

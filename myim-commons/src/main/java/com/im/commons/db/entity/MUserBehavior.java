@@ -7,17 +7,26 @@ import java.util.Date;
  * @author lizhou
  */
 public class MUserBehavior extends BaseId {
+	/** 用户在线状态 0 离线 */
+	public static final byte P_OFFLINE = 0;
+	/** 用户在线状态 1 在线 */
+	public static final byte P_ONLINE = 1;
+	/** 用户在线状态 2 空闲 */
+	public static final byte P_IDLE = 2;
+	/** 用户在线状态 3 忙碌 */
+	public static final byte P_BUSY = 3;
+
 	/** 用户id */
 	private Long userId;
 	/** 用户在线状态 0 离线 1 在线 2 空闲 3 忙碌 */
 	private byte presence = 0;
-	/** 网络类型．0 未知 1 有线 2 WIFI 3 2G 4 3G 5 4G 6 5G  */
+	/** 网络类型．-1 未知 0 有线 1 WIFI 2 2G 3 3G 4 4G 5 5G  */
 	private byte netType = 0;
 	/** 客户端设备类型 */
 	private short deviceType;
 
 	/** 用户令牌，可作为用户离线检测的指标 */
-	private byte[] token;
+	private String token;
 	/** 用户令牌过期时间 */
 	private Date expiry;
 	/** 最近登录时间 */
@@ -49,10 +58,10 @@ public class MUserBehavior extends BaseId {
 	public void setDeviceType(short deviceType) {
 		this.deviceType = deviceType;
 	}
-	public byte[] getToken() {
+	public String getToken() {
 		return token;
 	}
-	public void setToken(byte[] token) {
+	public void setToken(String token) {
 		this.token = token;
 	}
 	public Date getExpiry() {

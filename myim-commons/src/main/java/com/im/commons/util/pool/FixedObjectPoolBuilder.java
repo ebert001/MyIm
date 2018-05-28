@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FixedObjectPoolBuilder<T extends BaseObject> {
+public class FixedObjectPoolBuilder<T extends BaseObject> extends AbstractObjectPool<T> {
 	private static final Logger logger = LoggerFactory.getLogger(FixedObjectPoolBuilder.class);
 	/** 钝化对象 */
 	private T[] passivatedObject = null;
@@ -20,8 +20,6 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 	private int writeIndex = 0;
 	/** 对象池容量 */
 	private int capacity = 16;
-
-	private Class<T> poolObjectClass = null;
 
 	private final ReentrantLock lock;
 	private final Condition notEmpty;
@@ -36,6 +34,7 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 	@SuppressWarnings("unchecked")
 	public FixedObjectPoolBuilder<T> build(Class<T> clazz) throws Exception {
 		this.poolObjectClass = clazz;
+		getClassType();
 		passivatedObject = (T[]) Array.newInstance(poolObjectClass, capacity);
 		passivatedIndex = new int[capacity];
 
@@ -49,6 +48,7 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 		return this;
 	}
 
+	@Override
 	public T borrowObject(long timeout, TimeUnit unit) {
 		lock.lock();
 		long nanos = unit.toNanos(timeout);
@@ -70,18 +70,15 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 		}
 	}
 
-	public T borrowObject(boolean await) {
+	@Override
+	public T borrowObject() {
 		lock.lock();
 		try {
 			if (!hasPassivatedObject()) {
-				if (await) {
-					try {
-						notEmpty.await();
-					} catch (InterruptedException e) {
-						logger.error("Interrupted Exception", e);
-						return null;
-					}
-				} else {
+				try {
+					notEmpty.await();
+				} catch (InterruptedException e) {
+					logger.error("Interrupted Exception", e);
 					return null;
 				}
 			}
@@ -91,6 +88,7 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 		}
 	}
 
+	@Override
 	public void returnObject(T obj) {
 		lock.lock();
 		try {
@@ -102,10 +100,12 @@ public class FixedObjectPoolBuilder<T extends BaseObject> {
 		}
 	}
 
+	@Override
 	public int getNumIdle() {
 		return Math.abs(writeIndex - readIndex);
 	}
 
+	@Override
 	public int getNumActive() {
 		return capacity - getNumIdle();
 	}

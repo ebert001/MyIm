@@ -47,4 +47,13 @@ public class CommonUtils {
     public static void append(byte src, byte[] dest, int offset) {
     	dest[offset] = src;
     }
+
+    public static boolean isEmpty(Object...args) {
+    	return args == null || args.length < 1;
+    }
+
+    public static boolean isNotEmpty(Object...args) {
+    	return !isEmpty(args);
+    }
+
 }
