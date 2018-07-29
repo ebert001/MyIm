@@ -4,12 +4,10 @@
 
 	<groupId>com.im</groupId>
 	<artifactId>myim</artifactId>
-	<version>${project.version}</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
-		<project.version>1.0</project.version>
-		
 		<project.encoding>UTF-8</project.encoding>
 		<!-- 文件拷贝时的编码 -->  
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  

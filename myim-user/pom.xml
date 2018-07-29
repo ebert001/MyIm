@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.im</groupId>
 		<artifactId>myim</artifactId>
-		<version>${project.version}</version>
+		<version>1.0</version>
 	</parent>
 
 	<name>user</name>
@@ -16,13 +16,13 @@
 		<dependency>
 			<groupId>com.im</groupId>
 			<artifactId>myim-spring</artifactId>
-			<version>${project.version}</version>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.im</groupId>
 			<artifactId>myim-commons</artifactId>
-			<version>${project.version}</version>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>
