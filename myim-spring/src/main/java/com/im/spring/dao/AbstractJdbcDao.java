@@ -442,12 +442,11 @@ public abstract class AbstractJdbcDao {
 			}
 		});
 		String sql = Insert.table(tableName).columns(StringUtils.join(columns, ","));
-		this.jdbcTemplate.update(sql, values.toArray());
-		
 		return saveAndGetId(sql, values.toArray());
 	}
 
 	public void update(String sql, Object...values) {
 		jdbcTemplate.update(sql, values);
 	}
+	
 }
