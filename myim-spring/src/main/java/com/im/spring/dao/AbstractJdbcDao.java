@@ -1,12 +1,15 @@
 package com.im.spring.dao;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +20,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.FieldCallback;
 
 import com.im.spring.PageResultWrapper;
 import com.im.spring.Restriction;
 import com.im.spring.SqlHelper;
+import com.im.spring.SqlHelper.Insert;
+import com.im.spring.mapper.Mapper;
 
 @Transactional
 public abstract class AbstractJdbcDao {
@@ -413,6 +420,31 @@ public abstract class AbstractJdbcDao {
 			}
 		}, holder);
 		return holder.getKey().longValue();
+	}
+	
+	public <T> Long saveAndGetId(T t) {
+		List<Object> values = new ArrayList<Object>();
+		List<String> columns = new ArrayList<String>();
+		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				Object value = ReflectionUtils.getField(field, t);
+				if (value == null) {
+					return;
+				}
+				String name = field.getName();
+				Mapper mapper = field.getAnnotation(Mapper.class);
+				if (mapper != null) {
+					name = mapper.name();
+				}
+				values.add(value);
+				columns.add(name);
+			}
+		});
+		String sql = Insert.table(tableName).columns(StringUtils.join(columns, ","));
+		this.jdbcTemplate.update(sql, values.toArray());
+		
+		return saveAndGetId(sql, values.toArray());
 	}
 
 	public void update(String sql, Object...values) {
