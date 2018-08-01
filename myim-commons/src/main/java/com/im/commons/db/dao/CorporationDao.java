@@ -33,7 +33,7 @@ public class CorporationDao extends AbstractJdbcDao {
 	}
 
 	public void update(Long id, String name) {
-		String sql = SqlHelper.update(tableName).columns("name = ?").where("id = ?");
+		String sql = SqlHelper.update(tableName).set("name = ?").where("id = ?");
 		update(sql, name, id);
 	}
 

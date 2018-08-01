@@ -1,6 +1,8 @@
 package com.im.spring;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SqlHelper {
 
@@ -29,27 +31,24 @@ public class SqlHelper {
 			sql.append(tableName);
 			return this;
 		}
-		public String columns(String... columns) {
+		public String columns(List<String> columns) {
 			sql.append("(");
-			String names = "";
-			String values = "";
-			for (String column : columns) {
-				names += column.trim() + ", ";
-				values += "?, ";
-			}
-			if (names.length() > 1) {
-				names = names.substring(0, names.length() - 2);
-				values = values.substring(0, values.length() - 2);
-			}
+			String names = Restriction.join(columns, ",");
+			String values = Restriction.repeat("?", ", ", columns.size());
 			sql.append(names);
 			sql.append(") values (");
 			sql.append(values);
 			sql.append(")");
 			return sql.toString();
 		}
-
-		public String columns(String columns) {
-			String[] ss = columns.split(",");
+		public String columns(String... columns) {
+			return columns(Arrays.asList(columns));
+		}
+		/**
+		 * @param phrase Such as: name,age,birthday
+		 */
+		public String columns(String phrase) {
+			String[] ss = phrase.split(",");
 			return columns(ss);
 		}
 	}
@@ -63,12 +62,15 @@ public class SqlHelper {
 			sql.append(tableName).append(" ");
 			return this;
 		}
-		public String where(Restriction...restrictions) {
-			if (restrictions == null || restrictions.length < 1) {
+		public String where(List<String> columns) {
+			if (columns == null || columns.size() < 1) {
 				return sql.toString();
 			}
-			sql.append(Restriction.whereSql(restrictions));
+			sql.append("where ").append(Restriction.join(columns, " = ? and ", " = ?"));
 			return sql.toString();
+		}
+		public String where(String... columns) {
+			return where(Arrays.asList(columns));
 		}
 		public String where(String where) {
 			if (where == null || "".equals(where.trim())) {
@@ -123,14 +125,14 @@ public class SqlHelper {
 			if (restrictions == null || restrictions.length < 1) {
 				return this;
 			}
-			sql.append(Restriction.whereSql(restrictions));
+			sql.append("where ").append(Restriction.whereSql(restrictions));
 			return this;
 		}
-		public Select where(String where) {
-			if (where == null || "".equals(where.trim())) {
+		public Select where(String phrase) {
+			if (phrase == null || "".equals(phrase.trim())) {
 				return this;
 			}
-			sql.append("where ").append(where);
+			sql.append("where ").append(phrase);
 			return this;
 		}
 		public Select groupBy(String columns) {
@@ -144,13 +146,17 @@ public class SqlHelper {
 		public String toCountString() {
 			StringBuilder r = new StringBuilder();
 			r.append("select count(").append(countColumns).append(") from ").append(tableName).append(" ");
-			r.append(sql).append(" ");
+			if (sql.length() > 0) {
+				r.append(sql).append(" ");
+			}
 			return r.toString();
 		}
 		public String toSqlString() {
 			StringBuilder r = new StringBuilder();
 			r.append("select ").append(columns).append(" from ").append(tableName).append(" ");
-			r.append(sql).append(" ");
+			if (sql.length() > 0) {
+				r.append(sql).append(" ");
+			}
 			return r.toString();
 		}
 		@Override
@@ -169,16 +175,29 @@ public class SqlHelper {
 			update.sql.append(tableName).append(" ").append("set ");
 			return update;
 		}
-		public Update columns(String columns) {
-			sql.append(columns).append(" ");
+		public Update set(List<String> columnList) {
+			if (columnList == null || columnList.size() < 1) {
+				throw new IllegalStateException("Column list can not be empty.");
+			}
+			sql.append(Restriction.join(columnList, " = ?, ", " = ? "));
 			return this;
 		}
-		public String where(Restriction...restrictions) {
-			if (restrictions == null || restrictions.length < 1) {
-				return sql.toString();
+		public Update set(String... columns) {
+			return set(Arrays.asList(columns));
+		}
+		public Update set(String phrase) {
+			sql.append(phrase).append(" ");
+			return this;
+		}
+		public String where(List<String> columnList) {
+			if (columnList == null || columnList.size() < 1) {
+				throw new IllegalStateException("Column list can not be empty.");
 			}
-			sql.append(Restriction.whereSql(restrictions)).append(" ");
+			sql.append("where ").append(Restriction.join(columnList, " = ? and ", " = ?"));
 			return sql.toString();
+		}
+		public String where(String... columns) {
+			return where(Arrays.asList(columns));
 		}
 		public String where(String where) {
 			if (where == null || "".equals(where.trim())) {
@@ -187,5 +206,32 @@ public class SqlHelper {
 			sql.append("where ").append(where).append(" ");
 			return sql.toString();
 		}
+		public String toSqlString() {
+			return sql.toString();
+		}
+	}
+
+	public static class Columns {
+		private StringBuilder sets = new StringBuilder();
+		private List<Object> setValues = new ArrayList<Object>();
+
+		public static Columns create(String column, Object value) {
+			return new Columns().set(column, value);
+		}
+
+		public Columns set(String column, Object value) {
+			sets.append(setValues.size() > 0 ? ", " : "").append(column).append(" = ?");
+			setValues.add(value);
+			return this;
+		}
+
+		public String getSetPhrase() {
+			return sets.toString();
+		}
+
+		public List<Object> getSetValues() {
+			return setValues;
+		}
+
 	}
 }

@@ -47,14 +47,16 @@ public class Restriction {
 	private String fieldName;
 	/** order 会使用到 */
 	private List<String> fieldNames = new ArrayList<String>();
-
+	/** 属性值 */
 	private Object value;
 	/** between, in, not in会使用到 */
 	private List<Object> values = new ArrayList<Object>();
-
+	/** 比较类型 */
 	private String type;
-
+	/** 连接符 */
 	private String boundSymbol = "and";
+	/** 是否匹配，辅助进行业务逻辑处理 */
+	private boolean matched = true;
 
 	public Restriction() {
 	}
@@ -64,9 +66,19 @@ public class Restriction {
 		this.type = type.toLowerCase();
 	}
 
+	public Restriction(boolean matched, String fieldName, String type) {
+		this(fieldName, type);
+		this.matched = matched;
+	}
+
 	public Restriction(String fieldName, String type, Object value) {
 		this(fieldName, type);
 		this.value = value;
+	}
+
+	public Restriction(boolean matched, String fieldName, String type, Object value) {
+		this(fieldName, type, value);
+		this.matched = matched;
 	}
 
 	// between 和 in 使用
@@ -75,9 +87,19 @@ public class Restriction {
 		this.values.addAll(values);
 	}
 
+	public Restriction(boolean matched, String fieldName, String type, List<? extends Object> values) {
+		this(fieldName, type, values);
+		this.matched = matched;
+	}
+
 	public Restriction(String fieldName, String type, Object... values) {
 		this(fieldName, type);
 		this.values.addAll(Arrays.asList(values));
+	}
+
+	public Restriction(boolean matched, String fieldName, String type, Object... values) {
+		this(fieldName, type, values);
+		this.matched = matched;
 	}
 
 	// order 使用
@@ -86,89 +108,170 @@ public class Restriction {
 		this.type = type.toLowerCase();
 	}
 
+	public Restriction(boolean matched, String type, String... fieldNames) {
+		this(type, fieldNames);
+		this.matched = matched;
+	}
+
 	public static Restriction le(String fieldName, Object value) {
 		return new Restriction(fieldName, LE, value);
+	}
+
+	public static Restriction le(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, LE, value);
 	}
 
 	public static Restriction ge(String fieldName, Object value) {
 		return new Restriction(fieldName, GE, value);
 	}
 
+	public static Restriction ge(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, GE, value);
+	}
+
 	public static Restriction eq(String fieldName, Object value) {
 		return new Restriction(fieldName, EQ, value);
+	}
+
+	public static Restriction eq(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, EQ, value);
 	}
 
 	public static Restriction notEq(String fieldName, Object value) {
 		return new Restriction(fieldName, NOT_EQ, value);
 	}
 
+	public static Restriction notEq(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, NOT_EQ, value);
+	}
+
 	public static Restriction lt(String fieldName, Object value) {
 		return new Restriction(fieldName, LT, value);
+	}
+
+	public static Restriction lt(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, LT, value);
 	}
 
 	public static Restriction gt(String fieldName, Object value) {
 		return new Restriction(fieldName, GT, value);
 	}
 
+	public static Restriction gt(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, GT, value);
+	}
+
 	public static Restriction likeBefore(String fieldName, Object value) {
+		return likeBefore(true, fieldName, value);
+	}
+
+	public static Restriction likeBefore(boolean matched, String fieldName, Object value) {
 		if (value == null || "".equals(String.valueOf(value))) {
 			return null;
 		}
-		return like(fieldName, "%" + value);
+		return new Restriction(matched, fieldName, LIKE, "%" + value);
 	}
 
 	public static Restriction likeAfter(String fieldName, Object value) {
+		return likeAfter(true, fieldName, value);
+	}
+
+	public static Restriction likeAfter(boolean matched, String fieldName, Object value) {
 		if (value == null || "".equals(String.valueOf(value))) {
 			return null;
 		}
-		return new Restriction(fieldName, LIKE, value + "%");
+		return new Restriction(matched, fieldName, LIKE, value + "%");
 	}
 
 	public static Restriction like(String fieldName, Object value) {
+		return like(true, fieldName, value);
+	}
+
+	public static Restriction like(boolean matched, String fieldName, Object value) {
 		if (value == null || "".equals(String.valueOf(value))) {
 			return null;
 		}
-		return new Restriction(fieldName, LIKE, "%" + value + "%");
+		return new Restriction(matched, fieldName, LIKE, "%" + value + "%");
 	}
 
 	public static Restriction notLike(String fieldName, Object value) {
 		return new Restriction(fieldName, NOT_LIKE, value);
 	}
 
+	public static Restriction notLike(boolean matched, String fieldName, Object value) {
+		return new Restriction(matched, fieldName, NOT_LIKE, value);
+	}
+
 	public static Restriction between(String fieldName, Object value1, Object value2) {
 		return new Restriction(fieldName, BETWEEN, Arrays.asList(value1, value2));
+	}
+
+	public static Restriction between(boolean matched, String fieldName, Object value1, Object value2) {
+		return new Restriction(matched, fieldName, BETWEEN, Arrays.asList(value1, value2));
 	}
 
 	public static Restriction in(String fieldName, Object... values) {
 		return new Restriction(fieldName, IN, Arrays.asList(values));
 	}
 
+	public static Restriction in(boolean matched, String fieldName, Object... values) {
+		return new Restriction(matched, fieldName, IN, Arrays.asList(values));
+	}
+
 	public static Restriction in(String fieldName, List<? extends Object> values) {
 		return new Restriction(fieldName, IN, values);
+	}
+
+	public static Restriction in(boolean matched, String fieldName, List<? extends Object> values) {
+		return new Restriction(matched, fieldName, IN, values);
 	}
 
 	public static Restriction notIn(String fieldName, Object... values) {
 		return new Restriction(fieldName, NOT_IN, Arrays.asList(values));
 	}
 
+	public static Restriction notIn(boolean matched, String fieldName, Object... values) {
+		return new Restriction(matched, fieldName, NOT_IN, Arrays.asList(values));
+	}
+
 	public static Restriction notIn(String fieldName, List<Object> values) {
 		return new Restriction(fieldName, NOT_IN, values);
+	}
+
+	public static Restriction notIn(boolean matched, String fieldName, List<Object> values) {
+		return new Restriction(matched, fieldName, NOT_IN, values);
 	}
 
 	public static Restriction isNull(String fieldName) {
 		return new Restriction(fieldName, IS_NULL);
 	}
 
+	public static Restriction isNull(boolean matched, String fieldName) {
+		return new Restriction(matched, fieldName, IS_NULL);
+	}
+
 	public static Restriction isNotNull(String fieldName) {
 		return new Restriction(fieldName, IS_NOT_NULL);
+	}
+
+	public static Restriction isNotNull(boolean matched, String fieldName) {
+		return new Restriction(matched, fieldName, IS_NOT_NULL);
 	}
 
 	public static Restriction orderByAsc(String... fieldNames) {
 		return new Restriction(ORDER_ASC, fieldNames);
 	}
 
+	public static Restriction orderByAsc(boolean matched, String... fieldNames) {
+		return new Restriction(matched, ORDER_ASC, fieldNames);
+	}
+
 	public static Restriction orderByDesc(String... fieldNames) {
 		return new Restriction(ORDER_DESC, fieldNames);
+	}
+
+	public static Restriction orderByDesc(boolean matched, String... fieldNames) {
+		return new Restriction(matched, ORDER_DESC, fieldNames);
 	}
 
 	public static Restriction or(Restriction restriction) {
@@ -205,7 +308,7 @@ public class Restriction {
 
 	/** 获取连接符(and, or)。如果是第一个块，不需要使用and,or */
 	private String getBoundSymbol(String boundSymbol) {
-		return boundSymbol + " ";
+		return (boundSymbol == null || boundSymbol.length() < 1) ? "" : (boundSymbol + " ");
 	}
 	private String buildString() {
 		return new StringBuilder(getBoundSymbol(boundSymbol))
@@ -233,21 +336,25 @@ public class Restriction {
 	private String buildStringOfIn() {
 		StringBuilder sb = new StringBuilder(getBoundSymbol(boundSymbol));
 		sb.append(fieldName).append(" ").append(type).append("(");
-		sb.append(repeat("?", values.size(), ","));
+		sb.append(repeat("?", ",", values.size()));
 		sb.append(") ");
 		return sb.toString();
 	}
 
-	public static String restrictionSql(Restriction...restrictions) {
+	public static String restrictionSql(Restriction... restrictions) {
+		return restrictionSql(Arrays.asList(restrictions));
+	}
+
+	public static String restrictionSql(List<Restriction> restrictions) {
 		StringBuilder sb = new StringBuilder("");
-		if (restrictions == null || restrictions.length < 1) {
+		if (restrictions == null || restrictions.size() < 1) {
 			return sb.toString();
 		}
 		List<Restriction> orderRestrictions = new ArrayList<Restriction>();
 		int num = 0;
-		for (int i = 0; i < restrictions.length; i++) {
-			Restriction restriction = restrictions[i];
-			if (restriction == null) {
+		for (int i = 0; i < restrictions.size(); i++) {
+			Restriction restriction = restrictions.get(i);
+			if (restriction == null || !restriction.matched) {
 				continue;
 			}
 			String type = restriction.getType();
@@ -281,11 +388,14 @@ public class Restriction {
 				sb.append(", ").append(join(restriction.fieldNames, ", ")).append(" ").append(restriction.type).append(" ");
 			}
 		}
-		sb.append(" ");
 		return sb.toString();
 	}
 
 	public static String whereSql(Restriction...restrictions) {
+		return whereSql(Arrays.asList(restrictions));
+	}
+
+	public static String whereSql(List<Restriction> restrictions) {
 		String restrictionSql = restrictionSql(restrictions);
 		if ("".equals(restrictionSql.trim())) {
 			return restrictionSql;
@@ -293,16 +403,20 @@ public class Restriction {
 		if (restrictionSql.startsWith("order")) { // 不需要前缀 where
 			return restrictionSql;
 		}
-		return "where " + restrictionSql;
+		return restrictionSql;
 	}
 
-	public static Object[] whereValues(Restriction...restrictions) {
+	public static Object[] whereValueArray(Restriction...restrictions) {
+		return whereValueList(restrictions).toArray();
+	}
+
+	public static List<Object> whereValueList(Restriction...restrictions) {
 		List<Object> list = new ArrayList<Object>();
 		if (restrictions == null || restrictions.length < 1) {
-			return list.toArray();
+			return list;
 		}
 		for (Restriction restriction : restrictions) {
-			if (restriction == null) {
+			if (restriction == null || !restriction.matched) {
 				continue;
 			}
 			String type = restriction.getType();
@@ -323,7 +437,7 @@ public class Restriction {
 				list.add(restriction.getValue());
 			}
 		}
-		return list.toArray();
+		return list;
 	}
 
 	public static Map<String, Object> valueMap(Restriction...restrictions) {
@@ -351,26 +465,61 @@ public class Restriction {
 		return values;
 	}
 
-	public static String repeat(String s, int num, String separator) {
+	public static String repeat(String content, String separator, int num) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < num; i++) {
-			sb.append(s);
-			if (i < num -1) {
-				sb.append(separator);
-			}
+		for (int i = 0; i < num - 1; i++) {
+			sb.append(content).append(separator);
 		}
+		sb.append(content);
 		return sb.toString();
 	}
 
-	public static String join(List<String> values, String separator) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < values.size(); i++) {
-			sb.append(values.get(i));
-			if (i < values.size() -1) {
-				sb.append(separator);
-			}
+	/**
+	 * Example:
+	 * <pre>
+     * Restriction.addEach([1, 2, 3], 'hello', true)   = ['hello1', 'hello2', 'hello3']
+     * Restriction.addEach([1, 2, 3], 'hello', false)   = ['1hello', '2hello', '3hello']
+     * </pre>
+	 * @param list
+	 * @param content
+	 * @param addBefore
+	 * @return
+	 */
+	public static List<String> addEach(List<String> list, String content, boolean addBefore) {
+		List<String> result = new ArrayList<String>();
+		for (String s : list) {
+			result.add(addBefore ? (content + s) : (s + content));
 		}
+		return result;
+	}
+
+	public static String join(String[] values, String separator, String appendLast) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length - 1; i++) {
+			sb.append(values[i]).append(separator);
+		}
+		sb.append(values[values.length - 1]).append(appendLast == null ? "" : appendLast);
 		return sb.toString();
+	}
+
+	public static String join(String[] values, String separator) {
+		return join(values, separator, null);
+	}
+
+	public static String join(List<String> values, String separator, String appendLast) {
+		return join(values.toArray(new String[values.size()]), separator, appendLast);
+	}
+
+	public static String join(List<String> values, String separator) {
+		return join(values, separator, null);
+	}
+
+	public static List<Restriction> convert(List<String> columns, List<Object> values) {
+		List<Restriction> result = new ArrayList<Restriction>();
+		for (int i = 0; i < columns.size(); i++) {
+			result.add(Restriction.eq(columns.get(i), values.get(i)));
+		}
+		return result;
 	}
 
 	public String getType() {

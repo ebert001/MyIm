@@ -25,8 +25,12 @@ import org.springframework.util.ReflectionUtils.FieldCallback;
 
 import com.im.spring.PageResultWrapper;
 import com.im.spring.Restriction;
+import com.im.spring.SpringUtils;
 import com.im.spring.SqlHelper;
+import com.im.spring.SqlHelper.Columns;
+import com.im.spring.SqlHelper.Delete;
 import com.im.spring.SqlHelper.Insert;
+import com.im.spring.SqlHelper.Update;
 import com.im.spring.mapper.Mapper;
 
 @Transactional
@@ -49,6 +53,7 @@ public abstract class AbstractJdbcDao {
 	/**
 	 * @param requiredType 只能是基本类型的包装类型
 	 */
+	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObject(String sql, Class<E> requiredType, Object...args) {
 		try {
 			return jdbcTemplate.queryForObject(sql, requiredType, args);
@@ -57,14 +62,16 @@ public abstract class AbstractJdbcDao {
 		}
 	}
 
+	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObject(String sql, Class<E> requiredType, Restriction...restrictions) {
 		try {
-			return jdbcTemplate.queryForObject(sql, requiredType, Restriction.whereValues(restrictions));
+			return jdbcTemplate.queryForObject(sql, requiredType, Restriction.whereValueArray(restrictions));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
 
+	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObject(String sql, RowMapper<E> mapper, Object...args) {
 		try {
 			return jdbcTemplate.queryForObject(sql, mapper, args);
@@ -73,18 +80,20 @@ public abstract class AbstractJdbcDao {
 		}
 	}
 
+	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObject(String sql, RowMapper<E> mapper, Restriction...restrictions) {
 		try {
-			return jdbcTemplate.queryForObject(sql, mapper, Restriction.whereValues(restrictions));
+			return jdbcTemplate.queryForObject(sql, mapper, Restriction.whereValueArray(restrictions));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
 
+	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObjectBy(RowMapper<E> mapper, Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
 		try {
-			return jdbcTemplate.queryForObject(sql, mapper, Restriction.whereValues(restrictions));
+			return jdbcTemplate.queryForObject(sql, mapper, Restriction.whereValueArray(restrictions));
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
@@ -92,7 +101,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public int getCount() {
-		String sql = SqlHelper.select(tableName).count("*").where().toCountString();
+		String sql = SqlHelper.select(tableName).count("*").where("").toCountString();
 		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 
@@ -111,19 +120,19 @@ public abstract class AbstractJdbcDao {
 	@Transactional
 	public int getCount(Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).count("*").where(restrictions).toCountString();
-		return jdbcTemplate.queryForObject(sql, Integer.class, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForObject(sql, Integer.class, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
 	public <E> List<E> getList(RowMapper<E> mapper, Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
-		return jdbcTemplate.query(sql, mapper, Restriction.whereValues(restrictions));
+		return jdbcTemplate.query(sql, mapper, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
 	public List<Map<String, Object>> getList(Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
-		return jdbcTemplate.queryForList(sql, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForList(sql, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -144,14 +153,14 @@ public abstract class AbstractJdbcDao {
 	public <E> List<E> getList(RowMapper<E> mapper, int pageNo, int pageSize, Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
 		sql += getLimitSql(pageNo, pageSize);
-		return jdbcTemplate.query(sql, mapper, Restriction.whereValues(restrictions));
+		return jdbcTemplate.query(sql, mapper, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
 	public List<Map<String, Object>> getList(int pageNo, int pageSize, Restriction...restrictions) {
 		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
 		sql += getLimitSql(pageNo, pageSize);
-		return jdbcTemplate.queryForList(sql, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForList(sql, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -239,7 +248,7 @@ public abstract class AbstractJdbcDao {
 		if (restrictions == null || restrictions.length < 1) {
 			return jdbcTemplate.queryForObject(sql, Integer.class);
 		}
-		return jdbcTemplate.queryForObject(sql, Integer.class, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForObject(sql, Integer.class, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -247,7 +256,7 @@ public abstract class AbstractJdbcDao {
 		if (restrictions == null || restrictions.length < 1) {
 			return jdbcTemplate.query(sql, bean);
 		}
-		return jdbcTemplate.query(sql, bean, Restriction.whereValues(restrictions));
+		return jdbcTemplate.query(sql, bean, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -255,7 +264,7 @@ public abstract class AbstractJdbcDao {
 		if (restrictions == null || restrictions.length < 1) {
 			return jdbcTemplate.queryForList(sql);
 		}
-		return jdbcTemplate.queryForList(sql, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForList(sql, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -264,7 +273,7 @@ public abstract class AbstractJdbcDao {
 		if (restrictions == null || restrictions.length < 1) {
 			return jdbcTemplate.query(sql, bean);
 		}
-		return jdbcTemplate.query(sql, bean, Restriction.whereValues(restrictions));
+		return jdbcTemplate.query(sql, bean, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -273,7 +282,7 @@ public abstract class AbstractJdbcDao {
 		if (restrictions == null || restrictions.length < 1) {
 			return jdbcTemplate.queryForList(sql);
 		}
-		return jdbcTemplate.queryForList(sql, Restriction.whereValues(restrictions));
+		return jdbcTemplate.queryForList(sql, Restriction.whereValueArray(restrictions));
 	}
 
 	@Transactional
@@ -391,13 +400,58 @@ public abstract class AbstractJdbcDao {
 		return (pageNo - 1) * pageSize;
 	}
 
-	/**
-	 * 仅适用于 数据库主键自动增长 类型的表
-	 * @param id
-	 */
-	public void delete(Long id) {
-		String sql = "delete from " + tableName + " where id = ?";
-		jdbcTemplate.update(sql, id);
+	public void delete(Restriction...restrictions) {
+		jdbcTemplate.update(SqlHelper.delete(tableName).where(Restriction.whereSql(restrictions)), Restriction.whereValueArray(restrictions));
+	}
+
+	public <T> void save(T t) {
+		List<Object> values = new ArrayList<Object>();
+		List<String> columns = new ArrayList<String>();
+		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				Object value = ReflectionUtils.getField(field, t);
+				if (value == null) {
+					return;
+				}
+				Mapper mapper = field.getAnnotation(Mapper.class);
+				if (mapper == null) {
+					columns.add(field.getName());
+				} else if (mapper.ignore()) {
+					return;
+				} else {
+					columns.add(mapper.name());
+				}
+				values.add(value);
+			}
+		});
+		String sql = Insert.table(tableName).columns(columns);
+		jdbcTemplate.update(sql, values.toArray());
+	}
+
+	public <T> Long saveAndGetId(T t) {
+		List<Object> values = new ArrayList<Object>();
+		List<String> columns = new ArrayList<String>();
+		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				Object value = ReflectionUtils.getField(field, t);
+				if (value == null) {
+					return;
+				}
+				Mapper mapper = field.getAnnotation(Mapper.class);
+				if (mapper == null) {
+					columns.add(field.getName());
+				} else if (mapper.ignore()) {
+					return;
+				} else {
+					columns.add(mapper.name());
+				}
+				values.add(value);
+			}
+		});
+		String sql = Insert.table(tableName).columns(columns);
+		return saveAndGetId(sql, values.toArray());
 	}
 
 	/**
@@ -421,32 +475,97 @@ public abstract class AbstractJdbcDao {
 		}, holder);
 		return holder.getKey().longValue();
 	}
-	
-	public <T> Long saveAndGetId(T t) {
+
+	/**
+	 * 调用此方法前应当先查询数据库，确保对象是最新的．否则保存的数据可能出现偏差.
+	 * @param t
+	 */
+	@Transactional
+	public <T> void updateByPK(T t) {
 		List<Object> values = new ArrayList<Object>();
 		List<String> columns = new ArrayList<String>();
+		List<Object> pkValues = new ArrayList<Object>();
+		List<String> pkColumns = new ArrayList<String>();
+		Mapper classMapper = t.getClass().getAnnotation(Mapper.class);
+		String[] pks = classMapper.primaryKey();
+		if (pks == null || pks.length < 1) {
+			throw new IllegalStateException("Mapper#primaryKey annotation not found at class: " + t.getClass());
+		}
 		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
 			@Override
 			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				Object value = ReflectionUtils.getField(field, t);
-				if (value == null) {
-					return;
-				}
-				String name = field.getName();
 				Mapper mapper = field.getAnnotation(Mapper.class);
-				if (mapper != null) {
+				String name = field.getName();
+				if (mapper == null) {
+				} else if (mapper.ignore()) {
+					return;
+				} else {
 					name = mapper.name();
 				}
-				values.add(value);
+				if (SpringUtils.contain(pks, name)) {
+					pkColumns.add(name);
+					pkValues.add(ReflectionUtils.getField(field, t));
+					return;
+				}
 				columns.add(name);
+				values.add(ReflectionUtils.getField(field, t));
 			}
 		});
-		String sql = Insert.table(tableName).columns(StringUtils.join(columns, ","));
-		return saveAndGetId(sql, values.toArray());
+		String sql = Update.table(tableName).set(columns).where(pkColumns);
+		values.addAll(pkValues);
+		jdbcTemplate.update(sql, values.toArray());
 	}
 
 	public void update(String sql, Object...values) {
 		jdbcTemplate.update(sql, values);
 	}
-	
+
+	public void update(Columns columns, Restriction...restrictions) {
+		String sql = Update.table(tableName).set(columns.getSetPhrase()).where(Restriction.whereSql(restrictions));
+		List<Object> values = columns.getSetValues();
+		values.addAll(Restriction.whereValueList(restrictions));
+		jdbcTemplate.update(sql, values.toArray());
+	}
+
+	@Transactional
+	public <T> void deleteByPK(T t) {
+		List<Object> pkValues = new ArrayList<Object>();
+		List<String> pkColumns = new ArrayList<String>();
+		Mapper classMapper = t.getClass().getAnnotation(Mapper.class);
+		String[] pks = classMapper.primaryKey();
+		if (pks == null || pks.length < 1) {
+			throw new IllegalStateException("Mapper#primaryKey annotation not found at class: " + t.getClass());
+		}
+		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				Mapper mapper = field.getAnnotation(Mapper.class);
+				String name = field.getName();
+				if (mapper == null) {
+				} else if (mapper.ignore()) {
+					return;
+				} else {
+					name = mapper.name();
+				}
+
+				if (SpringUtils.contain(pks, name)) {
+					pkColumns.add(name);
+					pkValues.add(ReflectionUtils.getField(field, t));
+					return;
+				}
+			}
+		});
+		String sql = Delete.table(tableName).where(StringUtils.join(pkColumns, " and ") + " = ?");
+		jdbcTemplate.update(sql, pkValues.toArray());
+	}
+
+	/**
+	 * 仅适用于 数据库主键自动增长 类型的表
+	 * @param id
+	 */
+	public void delete(Long id) {
+		String sql = "delete from " + tableName + " where id = ?";
+		jdbcTemplate.update(sql, id);
+	}
+
 }

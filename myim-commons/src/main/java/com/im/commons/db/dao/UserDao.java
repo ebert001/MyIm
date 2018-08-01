@@ -33,7 +33,7 @@ public class UserDao extends AbstractJdbcDao {
 	}
 
 	public void modifyPassword(Long userId, String password, String salt) {
-		String sql = SqlHelper.update(tableName).columns("password = ?, salt = ?").where("id = ?");
+		String sql = SqlHelper.update(tableName).set("password = ?, salt = ?").where("id = ?");
 		update(sql, password, salt, userId);
 	}
 
@@ -43,7 +43,7 @@ public class UserDao extends AbstractJdbcDao {
 	}
 
 	public void updateUserGroupName(Long id, String groupName) {
-		String sql = SqlHelper.update(TABLE_USER_GROUP).columns("name = ?").where("id = ?");
+		String sql = SqlHelper.update(TABLE_USER_GROUP).set("name = ?").where("id = ?");
 		this.saveAndGetId(sql, groupName, id);
 	}
 
@@ -68,7 +68,7 @@ public class UserDao extends AbstractJdbcDao {
 	}
 
 	public void updateUserBehavior(Long userId, String token, Date expiryTime, Date lastLoginTime, String lastLoginIpv4) {
-		String sql = SqlHelper.update(TABLE_USER_BEHAVIOR).columns("token = ?, expiry = ?, last_login_time = ?, last_login_ip4").where("user_id = ?");
+		String sql = SqlHelper.update(TABLE_USER_BEHAVIOR).set("token = ?, expiry = ?, last_login_time = ?, last_login_ip4").where("user_id = ?");
 		update(sql, token, expiryTime, lastLoginTime, lastLoginIpv4, userId);
 	}
 

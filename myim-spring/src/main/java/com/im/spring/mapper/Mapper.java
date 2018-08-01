@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * RowMapper annotation writen
  * @author lizhou
  */
-@Target(value = {ElementType.FIELD})
+@Target(value = {ElementType.FIELD, ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 public @interface Mapper {
@@ -20,6 +20,12 @@ public @interface Mapper {
 	 * @return column name for table
 	 */
 	String name();
+
+	/**
+	 * primary key
+	 * @return
+	 */
+	String[] primaryKey();
 
 	/**
 	 * if ignore flag is true, the field will be not in result list.
