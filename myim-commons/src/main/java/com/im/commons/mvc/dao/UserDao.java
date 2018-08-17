@@ -1,13 +1,13 @@
-package com.im.commons.db.dao;
+package com.im.commons.mvc.dao;
 
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.im.commons.db.entity.MUser;
-import com.im.commons.db.entity.MUserBehavior;
-import com.im.commons.db.entity.MUserGroup;
+import com.im.commons.mvc.entity.MUser;
+import com.im.commons.mvc.entity.MUserBehavior;
+import com.im.commons.mvc.entity.MUserGroup;
 import com.im.spring.SqlHelper;
 import com.im.spring.dao.AbstractJdbcDao;
 import com.im.spring.mapper.MapperHelper;

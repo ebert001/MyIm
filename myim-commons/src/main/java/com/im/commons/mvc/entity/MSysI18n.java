@@ -1,4 +1,4 @@
-package com.im.commons.db.entity;
+package com.im.commons.mvc.entity;
 
 public class MSysI18n extends BaseId {
 

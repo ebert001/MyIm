@@ -1,12 +1,12 @@
-package com.im.commons.db.entity;
+package com.im.commons.mvc.entity;
 
 import java.util.Date;
 
 /**
- * 已送达消息表．正常情况下，已送达消息不需要记录．
+ * 离线消息
  * @author lizhou
  */
-public class MArrivedMessage extends BaseId {
+public class MOfflineMessage extends BaseId {
 	/** 用户id */
 	private Long userId;
 	/** 群组id */
@@ -19,7 +19,6 @@ public class MArrivedMessage extends BaseId {
 	private Date sendTime;
 	/** 消息记录入库时间 */
 	private Date createTime;
-
 	public Long getUserId() {
 		return userId;
 	}

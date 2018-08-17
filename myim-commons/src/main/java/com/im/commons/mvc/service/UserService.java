@@ -1,4 +1,4 @@
-package com.im.commons.db.service;
+package com.im.commons.mvc.service;
 
 import java.util.Date;
 
@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.im.commons.db.dao.UserDao;
-import com.im.commons.db.entity.MUser;
 import com.im.commons.exception.ImException;
 import com.im.commons.exception.UserNotFoundException;
+import com.im.commons.mvc.dao.UserDao;
+import com.im.commons.mvc.entity.MUser;
 import com.im.commons.util.CommonUtils;
 import com.im.commons.util.DateUtils;
 import com.im.commons.util.ImConstants;
@@ -91,12 +91,10 @@ public class UserService extends AbstractService<MUser> {
 	}
 
 	@Transactional
-	public void addUser(String username, String password) {
-		addUser(username, password, corporationService.getOfficial().getId(), MUser.SEX_NONE);
-	}
-
-	@Transactional
 	public void addUser(String username, String password, Long corpId, char sex) {
+		if (corpId == null) {
+			corpId = corporationService.getOfficial().getId();
+		}
 		String salt = CommonUtils.randomString(32);
 		String storePassword = calPassword(password, salt);
 		MUser user = new MUser();

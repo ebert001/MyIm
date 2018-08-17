@@ -1,10 +1,10 @@
-package com.im.commons.db.dao;
+package com.im.commons.mvc.dao;
 
 import java.util.Date;
 
 import org.springframework.stereotype.Repository;
 
-import com.im.commons.db.entity.MCorporation;
+import com.im.commons.mvc.entity.MCorporation;
 import com.im.spring.SqlHelper;
 import com.im.spring.dao.AbstractJdbcDao;
 import com.im.spring.mapper.MapperHelper;
