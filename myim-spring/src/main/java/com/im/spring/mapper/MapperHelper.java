@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.util.Assert;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
 public class MapperHelper {
@@ -54,7 +53,6 @@ public class MapperHelper {
 	}
 
 	private static Field[] getDeclaredFields(Class<?> clazz) {
-		Assert.notNull(clazz, "Class must not be null");
 		Field[] result = declaredFieldsCache.get(clazz);
 		if (result != null) {
 			return result;
