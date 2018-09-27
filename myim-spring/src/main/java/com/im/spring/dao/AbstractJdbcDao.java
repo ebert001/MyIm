@@ -410,6 +410,9 @@ public abstract class AbstractJdbcDao {
 		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
 			@Override
 			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				if (!field.isAccessible() ) {
+					field.setAccessible(true);
+				}
 				Object value = ReflectionUtils.getField(field, t);
 				if (value == null) {
 					return;
@@ -435,6 +438,9 @@ public abstract class AbstractJdbcDao {
 		ReflectionUtils.doWithFields(t.getClass(), new FieldCallback() {
 			@Override
 			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				if (!field.isAccessible() ) {
+					field.setAccessible(true);
+				}
 				Object value = ReflectionUtils.getField(field, t);
 				if (value == null) {
 					return;
@@ -502,6 +508,9 @@ public abstract class AbstractJdbcDao {
 				} else {
 					name = mapper.name();
 				}
+				if (!field.isAccessible() ) {
+					field.setAccessible(true);
+				}
 				if (SpringUtils.contain(pks, name)) {
 					pkColumns.add(name);
 					pkValues.add(ReflectionUtils.getField(field, t));
@@ -547,7 +556,9 @@ public abstract class AbstractJdbcDao {
 				} else {
 					name = mapper.name();
 				}
-
+				if (!field.isAccessible() ) {
+					field.setAccessible(true);
+				}
 				if (SpringUtils.contain(pks, name)) {
 					pkColumns.add(name);
 					pkValues.add(ReflectionUtils.getField(field, t));
