@@ -28,6 +28,7 @@ create table m_user (
 	card_no varchar(32) comment '用户身份证信息',
 	mobile_no varchar(20) comment '用户手机',
 	register_time date not null comment '注册时间',
+	version int not null default 1 comment '用户群组版本, 用户终端将根据此值决定是否更新好友列表',
 
 	unique key `uk_name` (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -60,6 +61,7 @@ create table m_user_group (
 	id bigint not null auto_increment primary key comment '主键',
 	user_id bigint not null comment '用户id',
 	name varchar(50) not null comment '分组名称',
+	version int not null default 1 comment '版本，若好友列表发生变更则此版本号+1',
 	create_time datetime comment '创建时间',
 
 	unique key `uk_user_id_name` (user_id, name)
