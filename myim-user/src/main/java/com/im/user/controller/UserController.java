@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.im.commons.mvc.service.UserService;
+import com.aswishes.im.commons.mvc.service.UserService;
 
 @Controller
 @RequestMapping("/user")

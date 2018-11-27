@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.im</groupId>
+	<groupId>com.aswishes.im</groupId>
 	<artifactId>myim</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>

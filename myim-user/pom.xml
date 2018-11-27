@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.im</groupId>
+		<groupId>com.aswishes.im</groupId>
 		<artifactId>myim</artifactId>
 		<version>1.0</version>
 	</parent>
@@ -14,13 +14,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.im</groupId>
+			<groupId>com.aswishes.im</groupId>
 			<artifactId>myim-spring</artifactId>
 			<version>1.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.im</groupId>
+			<groupId>com.aswishes.im</groupId>
 			<artifactId>myim-commons</artifactId>
 			<version>1.0</version>
 		</dependency>
