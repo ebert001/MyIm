@@ -16,20 +16,22 @@ import java.lang.annotation.Target;
 public @interface Mapper {
 
 	/**
-	 * specify column name for field mapping.
-	 * @return column name for table
+	 * @return column name
 	 */
 	String name() default "";
+	
+	/**
+	 * @return table name
+	 */
+	String tableName() default "";
 
 	/**
-	 * primary key
-	 * @return
+	 * @return primary key
 	 */
 	String[] primaryKey() default {};
 
 	/**
-	 * if ignore flag is true, the field will be not in result list.
-	 * @return
+	 * @return  true, the field will be not in result list.
 	 */
 	boolean ignore() default false;
 

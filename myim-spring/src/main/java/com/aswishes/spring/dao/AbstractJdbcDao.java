@@ -31,6 +31,7 @@ import com.aswishes.spring.SqlHelper.Columns;
 import com.aswishes.spring.SqlHelper.Delete;
 import com.aswishes.spring.SqlHelper.Insert;
 import com.aswishes.spring.SqlHelper.Update;
+import com.aswishes.spring.exception.RDbException;
 import com.aswishes.spring.mapper.Mapper;
 
 @Transactional
@@ -91,7 +92,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional(noRollbackFor = {EmptyResultDataAccessException.class})
 	public <E> E getObjectBy(RowMapper<E> mapper, Restriction...restrictions) {
-		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
+		String sql = SqlHelper.select(getTableName(mapper, tableName)).columns("*").where(restrictions).toSqlString();
 		try {
 			return jdbcTemplate.queryForObject(sql, mapper, Restriction.whereValueArray(restrictions));
 		} catch (EmptyResultDataAccessException e) {
@@ -107,7 +108,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> List<E> getList(RowMapper<E> mapper) {
-		String sql = SqlHelper.select(tableName).columns("*").where("").toSqlString();
+		String sql = SqlHelper.select(getTableName(mapper, tableName)).columns("*").where("").toSqlString();
 		return jdbcTemplate.query(sql, mapper);
 	}
 
@@ -125,7 +126,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> List<E> getList(RowMapper<E> mapper, Restriction...restrictions) {
-		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
+		String sql = SqlHelper.select(getTableName(mapper, tableName)).columns("*").where(restrictions).toSqlString();
 		return jdbcTemplate.query(sql, mapper, Restriction.whereValueArray(restrictions));
 	}
 
@@ -137,7 +138,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> List<E> getList(RowMapper<E> mapper, int pageNo, int pageSize) {
-		String sql = SqlHelper.select(tableName).columns("*").where().toSqlString();
+		String sql = SqlHelper.select(getTableName(mapper, tableName)).columns("*").where().toSqlString();
 		sql += getLimitSql(pageNo, pageSize);
 		return jdbcTemplate.query(sql, mapper);
 	}
@@ -151,7 +152,7 @@ public abstract class AbstractJdbcDao {
 
 	@Transactional
 	public <E> List<E> getList(RowMapper<E> mapper, int pageNo, int pageSize, Restriction...restrictions) {
-		String sql = SqlHelper.select(tableName).columns("*").where(restrictions).toSqlString();
+		String sql = SqlHelper.select(getTableName(mapper, tableName)).columns("*").where(restrictions).toSqlString();
 		sql += getLimitSql(pageNo, pageSize);
 		return jdbcTemplate.query(sql, mapper, Restriction.whereValueArray(restrictions));
 	}
@@ -178,7 +179,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -198,7 +199,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -218,7 +219,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -238,7 +239,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -300,7 +301,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -320,7 +321,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -367,7 +368,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -387,7 +388,7 @@ public abstract class AbstractJdbcDao {
 		try {
 			wrapper.paging();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RDbException(e.getCause());
 		}
 		return wrapper;
 	}
@@ -429,7 +430,7 @@ public abstract class AbstractJdbcDao {
 				values.add(value);
 			}
 		});
-		String sql = Insert.table(tableName).columns(columns);
+		String sql = Insert.table(getTableName(t, tableName)).columns(columns);
 		jdbcTemplate.update(sql, values.toArray());
 	}
 
@@ -459,7 +460,7 @@ public abstract class AbstractJdbcDao {
 				values.add(value);
 			}
 		});
-		String sql = Insert.table(tableName).columns(columns);
+		String sql = Insert.table(getTableName(t, tableName)).columns(columns);
 		return saveAndGetId(sql, values.toArray());
 	}
 
@@ -523,7 +524,7 @@ public abstract class AbstractJdbcDao {
 				values.add(ReflectionUtils.getField(field, t));
 			}
 		});
-		String sql = Update.table(tableName).set(columns).where(pkColumns);
+		String sql = Update.table(getTableName(t, tableName)).set(columns).where(pkColumns);
 		values.addAll(pkValues);
 		jdbcTemplate.update(sql, values.toArray());
 	}
@@ -569,7 +570,7 @@ public abstract class AbstractJdbcDao {
 				}
 			}
 		});
-		String sql = Delete.table(tableName).where(StringUtils.join(pkColumns, " and ") + " = ?");
+		String sql = Delete.table(getTableName(t, tableName)).where(StringUtils.join(pkColumns, " and ") + " = ?");
 		jdbcTemplate.update(sql, pkValues.toArray());
 	}
 
@@ -582,4 +583,14 @@ public abstract class AbstractJdbcDao {
 		jdbcTemplate.update(sql, id);
 	}
 
+	private String getTableName(Object mapper, String tableName) {
+		Mapper tmapper = mapper.getClass().getAnnotation(Mapper.class);
+		if (tmapper == null) {
+			return tableName;
+		}
+		if (StringUtils.isNotBlank(tmapper.tableName())) {
+			return tmapper.tableName().trim();
+		}
+		return tableName;
+	}
 }
