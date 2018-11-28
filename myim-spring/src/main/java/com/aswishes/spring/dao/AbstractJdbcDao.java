@@ -418,13 +418,14 @@ public abstract class AbstractJdbcDao {
 					return;
 				}
 				Mapper mapper = field.getAnnotation(Mapper.class);
+				String name = field.getName();
 				if (mapper == null) {
-					columns.add(field.getName());
 				} else if (mapper.ignore()) {
 					return;
-				} else {
-					columns.add(mapper.name());
+				} else if (StringUtils.isNotBlank(mapper.name())) {
+					name = mapper.name();
 				}
+				columns.add(name);
 				values.add(value);
 			}
 		});
@@ -446,13 +447,15 @@ public abstract class AbstractJdbcDao {
 					return;
 				}
 				Mapper mapper = field.getAnnotation(Mapper.class);
+				String name = field.getName();
 				if (mapper == null) {
-					columns.add(field.getName());
+					name = field.getName();
 				} else if (mapper.ignore()) {
 					return;
-				} else {
-					columns.add(mapper.name());
+				} else if (StringUtils.isNotBlank(mapper.name())) {
+					name = mapper.name();
 				}
+				columns.add(name);
 				values.add(value);
 			}
 		});
@@ -505,7 +508,7 @@ public abstract class AbstractJdbcDao {
 				if (mapper == null) {
 				} else if (mapper.ignore()) {
 					return;
-				} else {
+				} else if (StringUtils.isNotBlank(mapper.name())) {
 					name = mapper.name();
 				}
 				if (!field.isAccessible() ) {
@@ -553,7 +556,7 @@ public abstract class AbstractJdbcDao {
 				if (mapper == null) {
 				} else if (mapper.ignore()) {
 					return;
-				} else {
+				} else if (StringUtils.isNotBlank(mapper.name())) {
 					name = mapper.name();
 				}
 				if (!field.isAccessible() ) {

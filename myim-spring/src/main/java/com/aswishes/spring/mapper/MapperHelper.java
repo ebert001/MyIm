@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
@@ -31,14 +32,15 @@ public class MapperHelper {
 			Field[] fields = getDeclaredFields(targetClass);
 			for (Field field : fields) {
 				Mapper mapper = field.getAnnotation(Mapper.class);
-				String columnName = null;
+				String columnName = field.getName();
 				Class<? extends TypeConverter> typeConvert = null;
 				if (mapper == null) {
-					columnName = field.getName();
 				} else if (mapper.ignore()) {
 					continue;
 				} else {
-					columnName = mapper.name();
+					if (StringUtils.isNotBlank(mapper.name())) {
+						columnName = mapper.name();
+					}
 					typeConvert = mapper.typeConvert();
 				}
 				if (field.isAccessible() == false) {
