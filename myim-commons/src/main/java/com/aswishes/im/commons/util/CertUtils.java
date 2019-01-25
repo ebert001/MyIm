@@ -124,9 +124,9 @@ public class CertUtils implements ImConstants {
 				fromDate, endDate, subjectDn, SubjectPublicKeyInfo.getInstance(publicKey.getEncoded()));
 		try {
 			ContentSigner signer = new JcaContentSignerBuilder(signatureType)
-					.setProvider(SSL_PROVIDER_NAME).build(privateKey);
+					.setProvider(SSL_PROVIDER_BC).build(privateKey);
 			X509CertificateHolder holder = builder.build(signer);
-			X509Certificate cert = new JcaX509CertificateConverter().setProvider(SSL_PROVIDER_NAME)
+			X509Certificate cert = new JcaX509CertificateConverter().setProvider(SSL_PROVIDER_BC)
 					.getCertificate(holder);
 			cert.checkValidity(date);
 			// 子证书验证父证书的key，因为没有传入签发者公钥，所以不验证了．
@@ -192,7 +192,7 @@ public class CertUtils implements ImConstants {
 			PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(new X500Name(subjectDn),
 					SubjectPublicKeyInfo.getInstance(publicKey.getEncoded()));
 			ContentSigner signer = new JcaContentSignerBuilder(signatureType)
-					.setProvider(SSL_PROVIDER_NAME).build(privateKey);
+					.setProvider(SSL_PROVIDER_BC).build(privateKey);
 			return builder.build(signer);
 		} catch (Exception e) {
 			logger.error("Generate CSR error", e);
@@ -391,7 +391,7 @@ public class CertUtils implements ImConstants {
 		PemReader reader = new PemReader(new FileReader(file));
 		PemObject pemObject = reader.readPemObject();
 		X509CertificateHolder holder = new X509CertificateHolder(pemObject.getContent());
-		X509Certificate cert = new JcaX509CertificateConverter().setProvider(SSL_PROVIDER_NAME)
+		X509Certificate cert = new JcaX509CertificateConverter().setProvider(SSL_PROVIDER_BC)
 				.getCertificate(holder);
 		reader.close();
 		return cert;
@@ -416,7 +416,7 @@ public class CertUtils implements ImConstants {
 	public static boolean verifyCsr(PKCS10CertificationRequest csr) {
 		try {
 			return csr.isSignatureValid(new JcaContentVerifierProviderBuilder()
-					.setProvider(SSL_PROVIDER_NAME).build(csr.getSubjectPublicKeyInfo()));
+					.setProvider(SSL_PROVIDER_BC).build(csr.getSubjectPublicKeyInfo()));
 		} catch (Exception e) {
 			logger.error("csr verify error", e);
 		}
@@ -426,7 +426,7 @@ public class CertUtils implements ImConstants {
 	public static void storeInPkcs12File(PrivateKey privateKey, Certificate[] certs, String keyStorePassword,
 			OutputStream out) {
 		try {
-			KeyStore keystore = KeyStore.getInstance(KS_TYPE_PKCS12, SSL_PROVIDER_NAME);
+			KeyStore keystore = KeyStore.getInstance(KS_TYPE_PKCS12, SSL_PROVIDER_BC);
 			keystore.load(null, keyStorePassword.toCharArray());
 			keystore.setKeyEntry("client", privateKey, keyStorePassword.toCharArray(), certs);
 			keystore.store(out, keyStorePassword.toCharArray());

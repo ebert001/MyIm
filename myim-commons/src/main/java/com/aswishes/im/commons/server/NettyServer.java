@@ -23,9 +23,8 @@ import io.netty.channel.ServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.ssl.SslHandler;
 
-public class NettyServer implements ImConstants {
+public class NettyServer extends NettyConnector implements ImConstants {
 	private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
 	private String name = "";
@@ -33,7 +32,6 @@ public class NettyServer implements ImConstants {
 	private Map<ChannelOption<?>, ?> channelOptions;
 	private SocketAddress address;
 	private Channel channel;
-	private SSLConfig sslConfig;
 
 	public NettyServer(int port) {
 		this.channelOptions = new HashMap<>();
@@ -82,13 +80,6 @@ public class NettyServer implements ImConstants {
 		logger.info("[{}]Start successfully.", this.name);
 	}
 
-	private void addSslHandler(ChannelPipeline pipeline) {
-		if (sslConfig == null) {
-			return;
-		}
-		pipeline.addLast("ssl", new SslHandler(sslConfig.getSSLEngine()));
-	}
-
 	public void shutdown() {
 	    if (channel == null || !channel.isOpen()) {
 	      // Already closed.
@@ -102,6 +93,10 @@ public class NettyServer implements ImConstants {
 	    		}
 			}
 		});
+	}
+	
+	public void setSslConfig(SSLConfig sslConfig) {
+		this.sslConfig = sslConfig;
 	}
 
 	public void setName(String name) {

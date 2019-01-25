@@ -22,23 +22,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.ssl.SslHandler;
 
-public class NettyClient {
+public class NettyClient extends NettyConnector {
 	private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 	private String name;
 	private EventLoopGroup workerGroup;
 	private Channel channel;
-	private SSLConfig sslConfig;
 
 	public NettyClient(String name) {
 		this.name = name;
-	}
-
-	public void setSSL() {
-		this.sslConfig = new SSLConfig();
-//		this.sslConfig.setKeyStoreParam(ksFile, pwd);
-//		this.sslConfig.setTrustStoreParam(ksFile, pwd)
 	}
 
 	public void connect(String host, int port, ChannelHandler...handlers) throws Exception {
@@ -58,13 +50,6 @@ public class NettyClient {
         channel = future.channel();
         channel.pipeline().addLast(handlers);
     }
-
-	private void addSslHandler(ChannelPipeline pipeline) {
-		if (sslConfig == null) {
-			return;
-		}
-		pipeline.addLast("ssl", new SslHandler(sslConfig.getSSLEngine()));
-	}
 
 	public void shutdown() {
 		// Already closed.
