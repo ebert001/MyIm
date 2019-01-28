@@ -35,9 +35,12 @@ public class MapperHelper {
 				String columnName = field.getName();
 				Class<? extends TypeConverter> typeConvert = null;
 				if (mapper == null) {
-				} else if (mapper.ignore()) {
-					continue;
-				} else {
+				}
+				// 不需要此判断，这样实体可以作为值对象使用.简化对象定义
+//				else if (mapper.ignore()) {
+//					continue;
+//				} 
+				else {
 					if (StringUtils.isNotBlank(mapper.name())) {
 						columnName = mapper.name();
 					}
