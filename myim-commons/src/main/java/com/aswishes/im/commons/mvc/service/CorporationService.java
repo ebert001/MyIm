@@ -10,7 +10,7 @@ import com.aswishes.im.commons.util.ImConstants;
 import com.aswishes.spring.service.AbstractService;
 
 @Service
-public class CorporationService extends AbstractService<MCorporation> {
+public class CorporationService extends AbstractService {
 	@Autowired
 	private CorporationDao corporationDao;
 	@Override

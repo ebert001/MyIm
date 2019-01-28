@@ -18,7 +18,7 @@ import com.aswishes.im.commons.util.ImStatus;
 import com.aswishes.spring.service.AbstractService;
 
 @Service
-public class UserService extends AbstractService<MUser> {
+public class UserService extends AbstractService {
 	@Autowired
 	private UserDao userDao;
 	@Autowired
