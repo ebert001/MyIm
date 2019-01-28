@@ -37,7 +37,7 @@ public class SSLConfig implements ImConstants {
 	}
 	
 	public SSLConfig setBKSKeyStoreParam(File ksFile, String ksPwd, String keyPwd) throws Exception {
-		return setKeyStoreParam(ksFile, KS_TYPE_BKS, ksPwd, keyPwd, KS_ALG_BKS);
+		return setKeyStoreParam(ksFile, KS_TYPE_BKS, ksPwd, keyPwd, KeyManagerFactory.getDefaultAlgorithm());
 	}
 	
 	public SSLConfig setPKCS12KeyStoreParam(File ksFile, String ksPwd, String keyPwd) throws Exception {
@@ -58,7 +58,7 @@ public class SSLConfig implements ImConstants {
 	}
 	
 	public SSLConfig setBKSTrustStoreParam(File ksFile, String ksPwd) throws Exception {
-		return setTrustStoreParam(ksFile, KS_TYPE_BKS, ksPwd, KS_ALG_BKS);
+		return setTrustStoreParam(ksFile, KS_TYPE_BKS, ksPwd, TrustManagerFactory.getDefaultAlgorithm());
 	}
 	
 	public SSLConfig setPKCS12TrustStoreParam(File ksFile, String ksPwd) throws Exception {

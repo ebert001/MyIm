@@ -29,9 +29,9 @@ public interface ImConstants {
 	public static final String KS_TYPE_JCEKS = "JCEKS";
 	public static final String KS_TYPE_BKS = "BKS";
 	
-	public static final String KS_ALG_PKCS12 = "Sun509";
-	public static final String KS_ALG_JKS = "Sun509";
-	public static final String KS_ALG_JCEKS = "Sun509";
-	public static final String KS_ALG_BKS = "Sun509";
+	public static final String KS_ALG_PKCS12 = "SunX509";
+	public static final String KS_ALG_JKS = "SunX509";
+	public static final String KS_ALG_JCEKS = "SunX509";
+	public static final String KS_ALG_BKS = "SunX509";
 
 }
