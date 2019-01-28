@@ -8,7 +8,7 @@ import com.aswishes.spring.Restriction;
 import com.aswishes.spring.dao.AbstractJdbcDao;
 import com.aswishes.spring.mapper.MapperHelper;
 
-public abstract class AbstractService<T> {
+public abstract class AbstractService {
 
 	protected AbstractJdbcDao dao;
 
@@ -30,35 +30,35 @@ public abstract class AbstractService<T> {
 		return dao.getList();
 	}
 
-	public List<T> getList(Class<T> bean) {
+	public <T> List<T> getList(Class<T> bean) {
 		return dao.getList(MapperHelper.getMapper(bean));
 	}
 
-	public List<T> getList(Class<T> bean, Restriction...restrictions) {
+	public <T> List<T> getList(Class<T> bean, Restriction...restrictions) {
 		return dao.getList(MapperHelper.getMapper(bean), restrictions);
 	}
 
-	public List<T> getList(Class<T> bean, int startIndex, int perNo) {
-		return dao.getList(MapperHelper.getMapper(bean), startIndex, perNo);
+	public <T> List<T> getList(Class<T> bean, int startIndex, int pageSize) {
+		return dao.getList(MapperHelper.getMapper(bean), startIndex, pageSize);
 	}
 
-	public List<T> getList(Class<T> bean, int startIndex, int perNo, Restriction...restrictions) {
-		return dao.getList(MapperHelper.getMapper(bean), startIndex, perNo, restrictions);
+	public <T> List<T> getList(Class<T> bean, int startIndex, int pageSize, Restriction...restrictions) {
+		return dao.getList(MapperHelper.getMapper(bean), startIndex, pageSize, restrictions);
 	}
 
-	public PageResultWrapper<Map<String, Object>> getPage(final int pageNo, final int perNo) {
-		return dao.getPage(pageNo, perNo);
+	public PageResultWrapper<Map<String, Object>> getPage(final int pageNo, final int pageSize) {
+		return dao.getPage(pageNo, pageSize);
 	}
 
-	public PageResultWrapper<Map<String, Object>> getPage(final int pageNo, final int perNo, Restriction...restrictions) {
-		return dao.getPage(pageNo, perNo, restrictions);
+	public PageResultWrapper<Map<String, Object>> getPage(final int pageNo, final int pageSize, Restriction...restrictions) {
+		return dao.getPage(pageNo, pageSize, restrictions);
 	}
 
-	public PageResultWrapper<T> getPage(final Class<T> bean, final int pageNo, final int perNo) {
-		return dao.getPage(MapperHelper.getMapper(bean), pageNo, perNo);
+	public <T> PageResultWrapper<T> getPage(final Class<T> bean, final int pageNo, final int pageSize) {
+		return dao.getPage(MapperHelper.getMapper(bean), pageNo, pageSize);
 	}
 
-	public PageResultWrapper<T> getPage(final Class<T> bean, final int pageNo, final int perNo, final Restriction...restrictions) {
-		return dao.getPage(MapperHelper.getMapper(bean), pageNo, perNo, restrictions);
+	public <T> PageResultWrapper<T> getPage(final Class<T> bean, final int pageNo, final int pageSize, final Restriction...restrictions) {
+		return dao.getPage(MapperHelper.getMapper(bean), pageNo, pageSize, restrictions);
 	}
 }
