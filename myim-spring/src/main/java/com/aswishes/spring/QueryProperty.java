@@ -9,19 +9,19 @@ import org.apache.commons.beanutils.ConvertUtils;
 
 /**
  * Format: 
- * filter-SLIKE-username
- * filter-LIN-id
+ * Q-S-LIKE-username
+ * Q-L-IN-id
  * 
  * @author lizhou
  */
-public class QueryFilter {
+public class QueryProperty {
 	
 	private String propertyName = null;
 	private Object propertyValue = null;
 	private Class<?> propertyClass = null;
 	private MatchType matchType = null;
 
-	/** 属性比较类型. */
+	/** 比较类型. */
 	public enum MatchType {
 		EQ("="), LIKE("like"), IN("in"), NI("not in"), LT("<"), GT(">"), LE("<="), GE(">=");
 		private String name;
@@ -33,7 +33,7 @@ public class QueryFilter {
 		}
 	}
 
-	/** 属性数据类型. */
+	/** 数据类型. */
 	public enum PropertyType {
 		S(String.class), I(Integer.class), L(Long.class), N(Double.class), D(Date.class), B(Boolean.class), C(Character.class);
 
@@ -46,16 +46,19 @@ public class QueryFilter {
 		}
 	}
 
-	public QueryFilter(String filterName, Object value) {
-		String[] ss = filterName.split("-", 2);
-		String type = ss[0];
+	/**
+	 * @param name S-LIKE-username
+	 * @param value
+	 */
+	public QueryProperty(String name, String value) {
+		String[] ss = name.split("-", 3);
 		
-		propertyClass = Enum.valueOf(PropertyType.class, type.substring(0, 1)).getValue(); // Long
-		matchType = Enum.valueOf(MatchType.class, type.substring(1)); // IN
+		propertyClass = Enum.valueOf(PropertyType.class, ss[0]).getValue();
+		matchType = Enum.valueOf(MatchType.class, ss[1]);
+		propertyName = ss[2];
 		
-		propertyName = ss[1];
-		if (matchType == MatchType.IN) {
-			propertyValue = ConvertUtils.convert(value, propertyClass);
+		if (matchType == MatchType.IN || matchType == MatchType.NI) {
+			propertyValue = ConvertUtils.convert(value.split(","), propertyClass);
 		} else {
 			propertyValue = ConvertUtils.convert(value, propertyClass);
 		}
@@ -65,40 +68,31 @@ public class QueryFilter {
 		return new Restriction(propertyName, matchType.getName(), propertyValue);
 	}
 
-	public static List<QueryFilter> buildFromMap(final Map<String, Object> param, final String prefix) {
-		List<QueryFilter> list = new ArrayList<QueryFilter>();
-		for (Map.Entry<String, Object> entry : param.entrySet()) {
+	public static Restriction[] convert(Map<String, String> param, String prefix) {
+		List<Restriction> list = new ArrayList<Restriction>();
+		for (Map.Entry<String, String> entry : param.entrySet()) {
 			String name = entry.getKey();
 			if (!name.startsWith(prefix)) {
 				continue;
 			}
-			Object value = entry.getValue();
+			String value = entry.getValue();
 			if (value == null) {
 				continue;
 			}
-			String pvalue = String.valueOf(value);
-			if (pvalue.isEmpty()) {
+			if (value.isEmpty()) {
 				continue;
 			}
 			String pname = name.substring(name.indexOf("-") + 1);
-			list.add(new QueryFilter(pname, value));
+			list.add(new QueryProperty(pname, value).toRestriction());
 		}
-		return list;
-	}
-
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	public Object getPropertyValue() {
-		return propertyValue;
+		return list.toArray(new Restriction[list.size()]);
 	}
 	
-	public Class<?> getPropertyClass() {
-		return propertyClass;
+	/**
+	 * @param param Key format: Q-S-LIKE-username
+	 */
+	public static Restriction[] convert(Map<String, String> param) {
+		return convert(param, "Q");
 	}
 
-	public MatchType getMatchType() {
-		return matchType;
-	}
 }
