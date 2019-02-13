@@ -34,10 +34,6 @@
 
 	<repositories>
 		<repository>
-			<id>nexus</id>
-			<url>http://192.168.200.8:8081/nexus/content/groups/public/	</url>
-		</repository>
-		<repository>
 			<id>jboss</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
 		</repository>
@@ -55,16 +51,16 @@
 	</distributionManagement>
 
 	<scm>
-		<url>https://github.com/jiecao-fm/hashids-java</url>
-		<connection>scm:git:git@github.com:jiecao-fm/hashids-java.git</connection>
-		<developerConnection>scm:git:git@github.com:jiecao-fm/hashids-java.git</developerConnection>
+		<url>https://github.com/jiecao-fm/myim-spring</url>
+		<connection>scm:git:git@github.com:myim/myim.git</connection>
+		<developerConnection>scm:git:git@github.com:myim/myim-spring.git</developerConnection>
 	</scm>
 
 	<developers>
 		<developer>
 			<email>ebert_li@163.com</email>
 			<name>Ebo</name>
-			<url>https://github.com/fanweixiao</url>
+			<url>https://github.com/myim</url>
 			<id>ebo</id>
 		</developer>
 	</developers>
@@ -111,16 +107,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
