@@ -41,7 +41,7 @@
 
 	<modules>
 		<module>myim-commons</module>
-		<module>myim-spring</module>
+		
 		<module>myim-user</module>
 		<module>myim-messager</module>
 		<module>myim-connector</module>
@@ -172,6 +172,12 @@
 		    <groupId>commons-beanutils</groupId>
 		    <artifactId>commons-beanutils</artifactId>
 		    <version>1.9.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aswishes.springjdbc</groupId>
+			<artifactId>springjdbc-helper</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>
